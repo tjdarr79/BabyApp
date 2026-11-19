@@ -2,6 +2,8 @@ package dev.babysim.engine
 
 import dev.babysim.engine.EngineFixtures.T0
 import dev.babysim.engine.model.AgeBandId
+import dev.babysim.engine.model.CareAction
+import dev.babysim.engine.model.CareActionType
 import dev.babysim.engine.model.SimInstant
 import dev.babysim.engine.model.TemperamentId
 import dev.babysim.engine.random.SplitMix64
@@ -49,6 +51,51 @@ class CatchUpEquivalencePropertyTest {
     }
 
     @Test
+    fun actionLogsReplayIdenticallyWhateverTheCatchUpSplits() {
+        val gen = SplitMix64(424242)
+        val actions =
+            CareAction.CONTINUOUS.map { CareAction.Start(it) } + CareAction.Stop +
+                (CareActionType.entries - CareAction.CONTINUOUS).map { CareAction.Do(it) }
+        repeat(ACTION_CASES) { case ->
+            val band = AgeBandId.entries[(gen.nextDouble() * AgeBandId.entries.size).toInt()]
+            val config = EngineFixtures.config(band, seed = gen.nextLong())
+            val end = SimInstant(T0.epochMillis + 12 * hourMillis)
+            val log =
+                List(1 + (gen.nextDouble() * 12).toInt()) {
+                    SimInstant(T0.epochMillis + (gen.nextDouble() * 12 * hourMillis).toLong()) to
+                        actions[(gen.nextDouble() * actions.size).toInt()]
+                }.sortedBy { it.first }
+            val extraSplits =
+                List(1 + (gen.nextDouble() * 5).toInt()) {
+                    SimInstant(T0.epochMillis + (gen.nextDouble() * 12 * hourMillis).toLong())
+                }
+
+            fun replay(splits: List<SimInstant>): Pair<List<BabyEvent>, dev.babysim.engine.state.BabyState> {
+                var state = engine.initialize(config, T0).state
+                val events = mutableListOf<BabyEvent>()
+                val steps = (log.map { it.first to it.second } + splits.map { it to null }).sortedBy { it.first }
+                for ((at, action) in steps) {
+                    val step =
+                        if (action == null) {
+                            engine.advance(config, state, at, predict = false)
+                        } else {
+                            engine.apply(config, state, action, at, predict = false)
+                        }
+                    state = step.state
+                    events += step.events
+                }
+                val last = engine.advance(config, state, end, predict = false)
+                return (events + last.events) to last.state
+            }
+
+            val direct = replay(emptyList())
+            val split = replay(extraSplits)
+            assertEquals(direct.first, split.first, "case $case: events differ, log=$log splits=$extraSplits")
+            assertEquals(direct.second, split.second, "case $case: state differs")
+        }
+    }
+
+    @Test
     fun predictionsAgreeAcrossSplits() {
         val gen = SplitMix64(7)
         repeat(50) {
@@ -65,5 +112,6 @@ class CatchUpEquivalencePropertyTest {
 
     private companion object {
         const val CASES = 1000
+        const val ACTION_CASES = 300
     }
 }

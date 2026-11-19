@@ -1,6 +1,9 @@
 package dev.babysim.engine.sim
 
 import dev.babysim.engine.model.BabyConfig
+import dev.babysim.engine.model.CareActionType
+import dev.babysim.engine.model.Cause
+import dev.babysim.engine.model.Effect
 import dev.babysim.engine.model.VocalType
 import dev.babysim.engine.params.AgeProfile
 import dev.babysim.engine.params.DoubleRange
@@ -9,6 +12,7 @@ import dev.babysim.engine.params.ParamSet
 import dev.babysim.engine.params.TemperamentProfile
 import dev.babysim.engine.random.RandomSource
 import dev.babysim.engine.random.nextTruncatedNormal
+import kotlin.math.pow
 
 /** Engine resolution (docs/04 §7.3): state changes only on ticks aligned to multiples of this in absolute time. */
 internal const val TICK_MILLIS: Long = 30_000L
@@ -94,4 +98,32 @@ internal class Rates(
     val escalateAfterMillis: Long = minutesToMillis(model.escalateAfterMinutes.value)
     val postFeedVoidWindowMillis: Long = minutesToMillis(model.postFeedVoidWindowMinutes.value)
     val autoPauseNoResponseMillis: Long = minutesToMillis(model.autoPauseHoursWithoutResponse.value * MINUTES_PER_HOUR)
+
+    // ---- care actions ----
+    private val effects: Map<CareActionType, Map<Cause, Effect>> = model.actionEffects.value
+
+    /** What the continuous [action] does to [cause]; NONE when no action runs or the matrix has no entry. */
+    fun effect(
+        action: CareActionType?,
+        cause: Cause,
+    ): Effect = action?.let { effects[it]?.get(cause) } ?: Effect.NONE
+
+    /** Comfort settles after about `settleMinutes`, longer for temperaments that are harder to soothe. */
+    val settlePerMinute: Double = 1.0 / (model.settleMinutes.value * temperament.sootheTimeScale.value)
+    val sootheFallMultiplier: Double = model.sootheFallMultiplier.value / temperament.sootheTimeScale.value
+    val overstimLevel: Double = model.overstimAt.value * temperament.overstimThresholdScale.value
+    val hungerComfortMillis: Long = minutesToMillis(model.hungerComfortMinutes.value)
+
+    /** Chance a sleeping baby stays asleep when put down: more sensitive temperaments rouse more often. */
+    val transferStayAsleepProb: Double =
+        model.transferStayAsleepProb.value.pow(temperament.transitionDistress.value)
 }
+
+/** Actions that count as soothing contact: they speed up calming. */
+internal val SOOTHING: Set<CareActionType> = setOf(CareActionType.HOLD, CareActionType.ROCK, CareActionType.FEED)
+
+/** Actions that hold the baby upright, so a burp can come up on its own. */
+internal val UPRIGHT: Set<CareActionType> = setOf(CareActionType.HOLD, CareActionType.ROCK)
+
+/** Social actions: they reset boredom. */
+internal val SOCIAL: Set<CareActionType> = setOf(CareActionType.HOLD, CareActionType.ROCK, CareActionType.PLAY)

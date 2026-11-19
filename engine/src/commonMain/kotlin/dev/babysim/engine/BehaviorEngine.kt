@@ -2,9 +2,11 @@ package dev.babysim.engine
 
 import dev.babysim.engine.model.Activity
 import dev.babysim.engine.model.BabyConfig
+import dev.babysim.engine.model.CareAction
 import dev.babysim.engine.model.SimInstant
 import dev.babysim.engine.params.ParamSet
 import dev.babysim.engine.random.RngBank
+import dev.babysim.engine.sim.ActionHandler
 import dev.babysim.engine.sim.Rates
 import dev.babysim.engine.sim.TICK_MILLIS
 import dev.babysim.engine.sim.TickRunner
@@ -70,6 +72,27 @@ class BehaviorEngine(
             tick += TICK_MILLIS
         }
         return withPrediction(config, w.toState(bank.snapshot(), target), events, predict)
+    }
+
+    /**
+     * Applies a caregiver [action] at [at]: catches up to [at] first, then acts (docs/04 §6.4). The result's
+     * events end with an ACTION_OUTCOME carrying the user-visible, non-punitive outcome.
+     */
+    fun apply(
+        config: BabyConfig,
+        state: BabyState,
+        action: CareAction,
+        at: SimInstant,
+        predict: Boolean = true,
+    ): StepResult {
+        val caughtUp = advance(config, state, at, predict = false)
+        val runner = runner(config)
+        val w = Work(caughtUp.state)
+        val bank = RngBank(caughtUp.state.rng)
+        val events = caughtUp.events.toMutableList()
+        val now = caughtUp.state.meta.lastAdvancedTo
+        ActionHandler(runner, runner.rates).apply(w, bank, action, now, events)
+        return withPrediction(config, w.toState(bank.snapshot(), now), events, predict)
     }
 
     /** Pauses the simulation at [at]: needs stop accumulating until [resume]. */

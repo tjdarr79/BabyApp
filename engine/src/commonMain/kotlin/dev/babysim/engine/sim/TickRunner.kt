@@ -5,6 +5,9 @@ import dev.babysim.engine.EventType
 import dev.babysim.engine.LocalClock
 import dev.babysim.engine.model.Activity
 import dev.babysim.engine.model.BabyConfig
+import dev.babysim.engine.model.CareActionType
+import dev.babysim.engine.model.Cause
+import dev.babysim.engine.model.Effect
 import dev.babysim.engine.model.SimInstant
 import dev.babysim.engine.random.RngBank
 import dev.babysim.engine.random.RngStreamId
@@ -29,7 +32,7 @@ private const val DRIVE_CAP = 3.0
 @Suppress("TooManyFunctions") // One function per behavior rule keeps each rule small and testable.
 internal class TickRunner(
     private val config: BabyConfig,
-    private val rates: Rates,
+    internal val rates: Rates,
     private val localClock: LocalClock,
 ) {
     private val model = rates.model
@@ -45,6 +48,7 @@ internal class TickRunner(
         if (w.pause != null) return
         val nightWeight = if (isNight(t)) rates.circadian else 0.0
         integrateDrives(w, t, nightWeight)
+        feeding(w, bank, t, out)
         runProcesses(w, bank, t, out)
         if (w.isAsleep) sleepStep(w, bank, t, nightWeight, out) else drowsiness(w, bank, t, out)
         updateDistress(w, t)
@@ -75,6 +79,13 @@ internal class TickRunner(
         val soiledRate = if (w.diaperSoiled) model.diaperDiscomfortPerMinuteSoiled.value else 0.0
         val discomfortRate = w.diaperWetness * model.diaperDiscomfortPerMinuteWet.value + soiledRate
         w.diaperDiscomfort = min(1.0, w.diaperDiscomfort + discomfortRate * TICK_MINUTES)
+        w.gas = max(0.0, w.gas - model.gasDecayPerMinute.value * TICK_MINUTES)
+        w.stimulation =
+            if (w.ongoingAction?.type == CareActionType.PLAY) {
+                min(1.0, w.stimulation + model.playStimulationPerMinute.value * TICK_MINUTES)
+            } else {
+                max(0.0, w.stimulation - model.stimulationDecayPerMinute.value * TICK_MINUTES)
+            }
         if (w.fussSpellEndsAt?.let { t >= it } == true) w.fussSpellEndsAt = null
         if (w.wantsContactUntil?.let { t >= it } == true) w.wantsContactUntil = null
     }
@@ -111,14 +122,28 @@ internal class TickRunner(
             ProcessId.STOOL -> rates.soiledPerMinute
             ProcessId.UNEXPLAINED_FUSS ->
                 if (!w.isAsleep && w.fussSpellEndsAt == null) rates.unexplainedFussPerMinute * eveningBoost(t) else 0.0
-            ProcessId.VOCAL ->
-                if (awakeAndCalm && rates.contentVocals.isNotEmpty()) {
-                    rates.vocalPerMinute * max(0.0, 1.0 + model.moodVocalGain.value * w.mood)
-                } else {
-                    0.0
-                }
+            ProcessId.VOCAL -> if (awakeAndCalm) vocalHazard(w) else 0.0
+            ProcessId.SETTLE -> if (settleableCauses(w).isNotEmpty()) rates.settlePerMinute else 0.0
+            ProcessId.SPONTANEOUS_BURP -> spontaneousBurpHazard(w)
         }
     }
+
+    private fun vocalHazard(w: Work): Double =
+        if (rates.contentVocals.isEmpty()) {
+            0.0
+        } else {
+            rates.vocalPerMinute *
+                max(0.0, 1.0 + model.moodVocalGain.value * w.mood)
+        }
+
+    private fun spontaneousBurpHazard(w: Work): Double =
+        if (w.ongoingAction?.type in UPRIGHT &&
+            w.gas >= model.burpableGas.value
+        ) {
+            model.spontaneousBurpPerMinute.value
+        } else {
+            0.0
+        }
 
     private fun fire(
         process: ProcessId,
@@ -148,6 +173,14 @@ internal class TickRunner(
                     )
                 out += event(w, t, EventType.VOCALIZATION).copy(vocal = vocals[index])
             }
+            ProcessId.SETTLE -> {
+                val settled = settleableCauses(w)
+                if (Cause.UNEXPLAINED in settled) w.fussSpellEndsAt = null
+                if (Cause.WANTS_CONTACT in settled) w.wantsContactUntil = null
+                w.timestamps = w.timestamps.copy(lastSoothedAt = t)
+                out += event(w, t, EventType.SETTLED).copy(action = w.ongoingAction?.type)
+            }
+            ProcessId.SPONTANEOUS_BURP -> burp(w, t, out)
         }
     }
 
@@ -157,7 +190,58 @@ internal class TickRunner(
             ProcessId.STOOL -> RngStreamId.DIAPER_STOOL
             ProcessId.UNEXPLAINED_FUSS -> RngStreamId.UNEXPLAINED_FUSS
             ProcessId.VOCAL -> RngStreamId.VOCAL
+            ProcessId.SETTLE -> RngStreamId.SOOTHE
+            ProcessId.SPONTANEOUS_BURP -> RngStreamId.BURP
         }
+
+    /** Comfort causes that the action in progress resolves, and that are active now. */
+    private fun settleableCauses(w: Work): Set<Cause> {
+        val action = w.ongoingAction?.type ?: return emptySet()
+        val active =
+            buildSet {
+                if (w.fussSpellEndsAt != null) add(Cause.UNEXPLAINED)
+                if (w.wantsContactUntil != null) add(Cause.WANTS_CONTACT)
+            }
+        return active.filterTo(mutableSetOf()) { rates.effect(action, it) == Effect.RESOLVES }
+    }
+
+    internal fun burp(
+        w: Work,
+        t: SimInstant,
+        out: MutableList<BabyEvent>,
+    ) {
+        w.gas = max(0.0, w.gas - model.gasPerBurp.value)
+        w.timestamps = w.timestamps.copy(lastBurpAt = t)
+        out += event(w, t, EventType.BURPED)
+    }
+
+    // ---- feeding (docs/04 §5.2) ---------------------------------------------------------------------------
+
+    private fun feeding(
+        w: Work,
+        bank: RngBank,
+        t: SimInstant,
+        out: MutableList<BabyEvent>,
+    ) {
+        val feed = w.ongoingAction?.takeIf { it.type == CareActionType.FEED } ?: return
+        w.hunger = max(0.0, w.hunger - feed.intakePerMinute * TICK_MINUTES)
+        w.gas = min(1.0, w.gas + model.gasPerFeedMinute.value * TICK_MINUTES)
+        if (w.hunger <= model.satiatedHunger.value) {
+            endFeed(w, bank, t)
+            out += event(w, t, EventType.FEED_FINISHED_CUE)
+        }
+    }
+
+    /** Ends a feed. Hunger left over shortens the time to the next hunger cue (docs/04 §5.2). */
+    internal fun endFeed(
+        w: Work,
+        bank: RngBank,
+        t: SimInstant,
+    ) {
+        w.ongoingAction = null
+        w.timestamps = w.timestamps.copy(lastFeedEndAt = t)
+        w.thresholds = w.thresholds.copy(hungerCueAt = sampleHungerCue(bank))
+    }
 
     private fun postFeedVoidBoost(
         w: Work,
@@ -233,7 +317,7 @@ internal class TickRunner(
         return SleepCycle(t, t + minutes).also { w.sleep = it }
     }
 
-    private fun wake(
+    internal fun wake(
         w: Work,
         bank: RngBank,
         t: SimInstant,
@@ -263,11 +347,26 @@ internal class TickRunner(
         when {
             fallAsleepAt != null && w.distress >= rates.cryLevel -> w.fallAsleepAt = null
             fallAsleepAt != null && t >= fallAsleepAt -> fallAsleep(w, bank, t, exhausted = false, out)
-            fallAsleepAt == null && w.sleepPressure >= w.thresholds.sleepReadyAt && w.distress < rates.cryLevel -> {
-                w.fallAsleepAt = t + bank.stream(RngStreamId.SLEEP).sample(model.drowsyToSleepMinutes.value)
+            fallAsleepAt == null && w.sleepPressure >= drowsyAt(w) && w.distress < rates.cryLevel -> {
+                w.fallAsleepAt = t + sampleDrowsyMinutes(bank)
             }
         }
     }
+
+    /** Sleep pressure at which the baby grows drowsy: rocking lowers it, play prevents drowsiness. */
+    internal fun drowsyAt(w: Work): Double {
+        val factor =
+            when (rates.effect(w.ongoingAction?.type, Cause.TIRED)) {
+                Effect.RESOLVES -> model.rockDrowsyFactor.value
+                Effect.PARTIAL -> (1.0 + model.rockDrowsyFactor.value) / 2.0
+                Effect.NONE -> 1.0
+                Effect.WORSENS -> Double.POSITIVE_INFINITY
+            }
+        return w.thresholds.sleepReadyAt * factor
+    }
+
+    internal fun sampleDrowsyMinutes(bank: RngBank): Double =
+        bank.stream(RngStreamId.SLEEP).sample(model.drowsyToSleepMinutes.value)
 
     private fun fallAsleep(
         w: Work,
@@ -303,32 +402,68 @@ internal class TickRunner(
             if (target > w.distress) {
                 min(target, w.distress + model.distressRisePerMinute.value * TICK_MINUTES)
             } else {
-                max(target, w.distress - model.distressFallPerMinute.value * TICK_MINUTES)
+                val soothing = if (w.ongoingAction?.type in SOOTHING) rates.sootheFallMultiplier else 1.0
+                max(target, w.distress - model.distressFallPerMinute.value * soothing * TICK_MINUTES)
             }
     }
 
-    /** The hidden causes. The UI never sees which are active (CLAUDE.md engine rules). */
+    /**
+     * The hidden causes (docs/04 §3.3), each scaled by what the action in progress does to it (docs/04 §6.4).
+     * The UI never sees which are active (CLAUDE.md engine rules).
+     */
     private fun distressTarget(
         w: Work,
         t: SimInstant,
     ): Double {
-        val weights = mutableListOf<Double>()
-        val hungerCue = w.thresholds.hungerCueAt
-        if (w.hunger >= hungerCue) {
-            weights += model.hungerCauseWeight.value + model.hungerOverdueGain.value * (w.hunger - hungerCue)
-        }
-        val ready = w.thresholds.sleepReadyAt
-        if (w.fallAsleepAt == null && w.sleepPressure >= ready + model.overtiredMargin.value) {
-            weights += model.overtiredCauseWeight.value
-        } else if (w.fallAsleepAt == null && w.sleepPressure >= ready) {
-            weights += model.tiredCauseWeight.value
-        }
-        if (w.diaperDiscomfort >= model.diaperCueAt.value) weights += model.diaperCauseWeight.value
-        if (w.fussSpellEndsAt != null) weights += model.unexplainedFussCauseWeight.value
-        if (w.wantsContactUntil != null) weights += model.wantsContactCauseWeight.value
-        if (isBored(w, t)) weights += model.boredCauseWeight.value
+        val weights = activeCauses(w, t).map { (cause, weight) -> weight * factor(w, cause, t) }.filter { it > 0.0 }
         if (weights.isEmpty()) return 0.0
         return (weights.max() + model.causeStackBonus.value * (weights.size - 1)).coerceIn(0.0, 1.0)
+    }
+
+    internal fun activeCauses(
+        w: Work,
+        t: SimInstant,
+    ): Map<Cause, Double> =
+        buildMap {
+            val hungerCue = w.thresholds.hungerCueAt
+            if (w.hunger >= hungerCue) {
+                put(
+                    Cause.HUNGER,
+                    model.hungerCauseWeight.value + model.hungerOverdueGain.value * (w.hunger - hungerCue),
+                )
+            }
+            val ready = w.thresholds.sleepReadyAt
+            if (w.fallAsleepAt == null && w.sleepPressure >= ready + model.overtiredMargin.value) {
+                put(Cause.OVERTIRED, model.overtiredCauseWeight.value)
+            } else if (w.fallAsleepAt == null && w.sleepPressure >= ready) {
+                put(Cause.TIRED, model.tiredCauseWeight.value)
+            }
+            if (w.gas >= model.gasDiscomfortAt.value) put(Cause.GAS, model.gasCauseWeight.value)
+            if (w.diaperDiscomfort >= model.diaperCueAt.value) put(Cause.DIAPER, model.diaperCauseWeight.value)
+            if (w.stimulation >= rates.overstimLevel) put(Cause.OVERSTIMULATED, model.overstimCauseWeight.value)
+            if (isBored(w, t)) put(Cause.BORED, model.boredCauseWeight.value)
+            if (w.wantsContactUntil != null) put(Cause.WANTS_CONTACT, model.wantsContactCauseWeight.value)
+            if (w.fussSpellEndsAt != null) put(Cause.UNEXPLAINED, model.unexplainedFussCauseWeight.value)
+        }
+
+    /** How the action in progress scales one cause's distress. Comfort for hunger only lasts a few minutes. */
+    private fun factor(
+        w: Work,
+        cause: Cause,
+        t: SimInstant,
+    ): Double {
+        val action = w.ongoingAction ?: return 1.0
+        return when (rates.effect(action.type, cause)) {
+            Effect.RESOLVES -> 0.0
+            Effect.PARTIAL ->
+                if (cause == Cause.HUNGER && t.millisSince(action.startedAt) > rates.hungerComfortMillis) {
+                    1.0
+                } else {
+                    model.partialReliefFactor.value
+                }
+            Effect.NONE -> 1.0
+            Effect.WORSENS -> model.worsenFactor.value
+        }
     }
 
     private fun isBored(
@@ -386,7 +521,12 @@ internal class TickRunner(
             }
             request == null -> w.cryingLevelSince = null
             w.isAsleep || w.distress <= model.calmThreshold.value -> {
-                out += event(w, t, EventType.CARE_REQUEST_RESOLVED).copy(careRequestId = request.id)
+                out +=
+                    event(
+                        w,
+                        t,
+                        EventType.CARE_REQUEST_RESOLVED,
+                    ).copy(careRequestId = request.id, action = caringAction(w))
                 closeRequest(w, bank)
             }
             shouldEscalate(w, request, t) -> {
@@ -399,12 +539,16 @@ internal class TickRunner(
         }
     }
 
+    /** The action in progress, or else the most recent one: what calmed the baby, as far as the user knows. */
+    private fun caringAction(w: Work): CareActionType? = w.ongoingAction?.type ?: w.recentActions.lastOrNull()?.action
+
     private fun shouldEscalate(
         w: Work,
         request: CareRequest,
         t: SimInstant,
     ): Boolean {
-        if (request.escalationLevel >= model.maxEscalationLevel.value) return false
+        // No repeat alerts while someone is already caring for the baby (docs/04 §12).
+        if (request.escalationLevel >= model.maxEscalationLevel.value || w.ongoingAction != null) return false
         val intenseFirstAlert = request.escalationLevel == 1 && w.activity == Activity.CRYING_INTENSE
         return intenseFirstAlert || t.millisSince(request.lastAlertAt) >= rates.escalateAfterMillis
     }
@@ -440,10 +584,23 @@ internal class TickRunner(
         val since = w.cryingSince ?: return
         if (t.millisSince(since) < rates.crySegmentMaxMillis) return
         w.careRequest?.let { request ->
-            out += event(w, t, EventType.CARE_REQUEST_EXPIRED).copy(careRequestId = request.id)
-            w.unanswered = w.unanswered.copy(expiredCount = w.unanswered.expiredCount + 1)
+            val responded = w.recentActions.lastOrNull()?.let { it.at >= request.openedAt } == true
+            if (responded) {
+                // Someone was caring for the baby: not an unanswered request (non-punitive, brief §8).
+                out +=
+                    event(
+                        w,
+                        t,
+                        EventType.CARE_REQUEST_RESOLVED,
+                    ).copy(careRequestId = request.id, action = caringAction(w))
+            } else {
+                out += event(w, t, EventType.CARE_REQUEST_EXPIRED).copy(careRequestId = request.id)
+                w.unanswered = w.unanswered.copy(expiredCount = w.unanswered.expiredCount + 1)
+            }
             closeRequest(w, bank)
         }
+        w.ongoingAction?.takeIf { it.type == CareActionType.FEED }?.let { endFeed(w, bank, t) }
+        if (w.ongoingAction?.type == CareActionType.PLAY) w.ongoingAction = null
         fallAsleep(w, bank, t, exhausted = true, out)
     }
 
@@ -489,7 +646,7 @@ internal class TickRunner(
     private fun isNight(t: SimInstant): Boolean =
         inWindow(localClock.minuteOfDay(t), config.nightStartLocalMinutes, config.nightEndLocalMinutes)
 
-    private fun event(
+    internal fun event(
         w: Work,
         t: SimInstant,
         type: EventType,

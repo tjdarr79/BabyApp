@@ -1,5 +1,8 @@
 package dev.babysim.engine.params
 
+import dev.babysim.engine.model.CareActionType
+import dev.babysim.engine.model.Cause
+import dev.babysim.engine.model.Effect
 import kotlinx.serialization.Serializable
 
 /**
@@ -50,6 +53,31 @@ data class ModelProfile(
     val moodVocalGain: Sourced<Double>,
     val autoPauseUnansweredRequests: Sourced<Int>,
     val autoPauseHoursWithoutResponse: Sourced<Double>,
+    /** Care actions (M2.4): what each continuous action does to each hidden cause while it runs (docs/04 §6.4). */
+    val actionEffects: Sourced<Map<CareActionType, Map<Cause, Effect>>>,
+    val partialReliefFactor: Sourced<Double>,
+    val worsenFactor: Sourced<Double>,
+    val sootheFallMultiplier: Sourced<Double>,
+    val hungerComfortMinutes: Sourced<Double>,
+    val satiatedHunger: Sourced<Double>,
+    val nonNutritiveComfort: Sourced<Double>,
+    val gasPerFeedMinute: Sourced<Double>,
+    val gasDecayPerMinute: Sourced<Double>,
+    val gasDiscomfortAt: Sourced<Double>,
+    val gasCauseWeight: Sourced<Double>,
+    val burpableGas: Sourced<Double>,
+    val burpSuccessProb: Sourced<Double>,
+    val gasPerBurp: Sourced<Double>,
+    val spontaneousBurpPerMinute: Sourced<Double>,
+    val playStimulationPerMinute: Sourced<Double>,
+    val stimulationDecayPerMinute: Sourced<Double>,
+    val overstimAt: Sourced<Double>,
+    val overstimCauseWeight: Sourced<Double>,
+    val settleMinutes: Sourced<Double>,
+    val rockDrowsyFactor: Sourced<Double>,
+    val transferStayAsleepProb: Sourced<Double>,
+    val changeTransitionDistress: Sourced<Double>,
+    val putDownTransitionDistress: Sourced<Double>,
 )
 
 /** On-disk shape of `engine/params/model.json`. */

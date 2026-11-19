@@ -77,3 +77,57 @@ enum class CareActionType {
     /** Reserved (docs/01 B6): exists in the engine, not exposed in the MVP UI. */
     PACIFIER,
 }
+
+/**
+ * Hidden causes of distress (docs/04 §3.3). Engine-internal: the UI never sees which are active.
+ * Listed here because the care-action effect matrix in `engine/params/model.json` is keyed by them.
+ */
+@Serializable
+enum class Cause {
+    HUNGER,
+    TIRED,
+    OVERTIRED,
+    GAS,
+    DIAPER,
+    OVERSTIMULATED,
+    BORED,
+    WANTS_CONTACT,
+    UNEXPLAINED,
+}
+
+/** What an ongoing care action does to one cause's distress (docs/04 §6.4). */
+@Serializable
+enum class Effect {
+    RESOLVES,
+    PARTIAL,
+    NONE,
+    WORSENS,
+}
+
+/** User-visible result of a care action. Informative and non-punitive (brief §8): never a score. */
+@Serializable
+enum class ActionOutcome {
+    STARTED,
+    STOPPED,
+    FEEDING,
+    NOT_INTERESTED,
+    BURPED,
+    NO_BURP,
+    DIAPER_DRY,
+    DIAPER_WET,
+    DIAPER_SOILED,
+    CHANGED_WET,
+    CHANGED_SOILED,
+    ALREADY_DRY,
+    PLAYING,
+    NOT_IN_THE_MOOD,
+    SETTLING_TO_SLEEP,
+    STAYED_ASLEEP,
+    WOKE_ON_TRANSFER,
+    WANTS_TO_BE_HELD,
+    WOKE_UP,
+    ALREADY_AWAKE,
+
+    /** The action does not apply right now (paused, nothing to stop, playing with a sleeping baby, reserved). */
+    NOT_NOW,
+}

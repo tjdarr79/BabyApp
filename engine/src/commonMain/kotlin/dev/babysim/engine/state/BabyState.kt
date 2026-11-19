@@ -1,6 +1,7 @@
 package dev.babysim.engine.state
 
 import dev.babysim.engine.EngineInfo
+import dev.babysim.engine.model.ActionOutcome
 import dev.babysim.engine.model.Activity
 import dev.babysim.engine.model.BabyConfig
 import dev.babysim.engine.model.BabyId
@@ -83,11 +84,13 @@ data class Drives(
     val mood: Double = 0.0,
 )
 
-/** A continuous caregiver action in progress (feeding, rocking, …). */
+/** A continuous caregiver action in progress (feeding, holding, rocking, playing). */
 @Serializable
 data class OngoingAction(
     val type: CareActionType,
     val startedAt: SimInstant,
+    /** Feeding only: hunger removed per minute, set so a full feed lasts the sampled feed length. */
+    val intakePerMinute: Double = 0.0,
 )
 
 /** An open care-required episode (docs/04 §4). */
@@ -127,6 +130,12 @@ enum class ProcessId {
     STOOL,
     UNEXPLAINED_FUSS,
     VOCAL,
+
+    /** A fussy spell or need for comfort settles while the baby is held or rocked. */
+    SETTLE,
+
+    /** A burp comes up on its own while the baby is held upright. */
+    SPONTANEOUS_BURP,
 }
 
 @Serializable
@@ -155,9 +164,10 @@ data class PauseInfo(
     val since: SimInstant,
 )
 
-/** Entry in the recent-caregiver-actions ring buffer (brief §7). Outcome is added in M2.4. */
+/** Entry in the recent-caregiver-actions ring buffer (brief §7). */
 @Serializable
 data class RecordedAction(
     val action: CareActionType,
     val at: SimInstant,
+    val outcome: ActionOutcome? = null,
 )

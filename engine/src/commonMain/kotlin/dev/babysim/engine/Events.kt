@@ -1,7 +1,9 @@
 package dev.babysim.engine
 
+import dev.babysim.engine.model.ActionOutcome
 import dev.babysim.engine.model.Activity
 import dev.babysim.engine.model.BabyId
+import dev.babysim.engine.model.CareActionType
 import dev.babysim.engine.model.SimInstant
 import dev.babysim.engine.model.VocalType
 import dev.babysim.engine.state.PauseReason
@@ -17,6 +19,9 @@ enum class EventFamily {
     /** Hidden from the user until discovered (e.g. a wet diaper before it is checked). */
     INTERNAL,
     LIFECYCLE,
+
+    /** The result of a caregiver action. */
+    ACTION,
 }
 
 @Serializable
@@ -28,6 +33,7 @@ enum class EventType(
     VOCALIZATION(EventFamily.AUDIBLE),
     SLEEP_NOISE(EventFamily.AUDIBLE),
     BRIEF_FUSS(EventFamily.AUDIBLE),
+    BURPED(EventFamily.AUDIBLE),
     CARE_REQUEST_OPENED(EventFamily.CARE, alerts = true),
     CARE_REQUEST_ESCALATED(EventFamily.CARE, alerts = true),
     CARE_REQUEST_RESOLVED(EventFamily.CARE),
@@ -35,6 +41,13 @@ enum class EventType(
     ACTIVITY_CHANGED(EventFamily.TRANSITION),
     FELL_ASLEEP(EventFamily.TRANSITION),
     WOKE(EventFamily.TRANSITION),
+
+    /** A feeding baby is full and turns away; the feed ends. */
+    FEED_FINISHED_CUE(EventFamily.TRANSITION),
+
+    /** A fussy spell or need for comfort settled under holding or rocking. */
+    SETTLED(EventFamily.TRANSITION),
+    ACTION_OUTCOME(EventFamily.ACTION),
     DIAPER_WET(EventFamily.INTERNAL),
     DIAPER_SOILED(EventFamily.INTERNAL),
     PAUSED(EventFamily.LIFECYCLE),
@@ -53,4 +66,7 @@ data class BabyEvent(
     val careRequestId: Long? = null,
     val escalationLevel: Int? = null,
     val pauseReason: PauseReason? = null,
+    /** The action this event answers: the action itself for ACTION_OUTCOME, the soothing action for RESOLVED. */
+    val action: CareActionType? = null,
+    val outcome: ActionOutcome? = null,
 )

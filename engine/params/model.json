@@ -336,6 +336,243 @@
       "evidence": "DESIGN_ASSUMPTION",
       "reviewStatus": "UNREVIEWED",
       "note": "Owner decision 2026-11-19 (docs/01 B1): auto-pause after 3 unanswered care requests or 4 h without response."
+    },
+    "actionEffects": {
+      "value": {
+        "FEED": {
+          "HUNGER": "RESOLVES",
+          "TIRED": "PARTIAL",
+          "OVERTIRED": "PARTIAL",
+          "GAS": "WORSENS",
+          "DIAPER": "NONE",
+          "OVERSTIMULATED": "PARTIAL",
+          "BORED": "PARTIAL",
+          "WANTS_CONTACT": "PARTIAL",
+          "UNEXPLAINED": "PARTIAL"
+        },
+        "HOLD": {
+          "HUNGER": "PARTIAL",
+          "TIRED": "PARTIAL",
+          "OVERTIRED": "PARTIAL",
+          "GAS": "PARTIAL",
+          "DIAPER": "NONE",
+          "OVERSTIMULATED": "PARTIAL",
+          "BORED": "RESOLVES",
+          "WANTS_CONTACT": "RESOLVES",
+          "UNEXPLAINED": "PARTIAL"
+        },
+        "ROCK": {
+          "HUNGER": "PARTIAL",
+          "TIRED": "RESOLVES",
+          "OVERTIRED": "PARTIAL",
+          "GAS": "PARTIAL",
+          "DIAPER": "NONE",
+          "OVERSTIMULATED": "PARTIAL",
+          "BORED": "RESOLVES",
+          "WANTS_CONTACT": "RESOLVES",
+          "UNEXPLAINED": "RESOLVES"
+        },
+        "PLAY": {
+          "HUNGER": "WORSENS",
+          "TIRED": "WORSENS",
+          "OVERTIRED": "WORSENS",
+          "GAS": "NONE",
+          "DIAPER": "NONE",
+          "OVERSTIMULATED": "WORSENS",
+          "BORED": "RESOLVES",
+          "WANTS_CONTACT": "RESOLVES",
+          "UNEXPLAINED": "PARTIAL"
+        }
+      },
+      "source": "DESIGN_ASSUMPTION: effect matrix from docs/04 §6.4",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "docs/04 §6.4 care-action effect matrix for continuous actions. RESOLVES removes the cause's distress while the action runs; PARTIAL scales it by partialReliefFactor; WORSENS by worsenFactor. Feeding resolves hunger by intake and adds gas. Instant actions are in engine code (docs/04 §14)."
+    },
+    "partialReliefFactor": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "A PARTIAL effect scales a cause's distress by this while the action runs."
+    },
+    "worsenFactor": {
+      "value": 1.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "A WORSENS effect scales a cause's distress by this while the action runs."
+    },
+    "sootheFallMultiplier": {
+      "value": 2.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Holding, rocking or feeding makes distress fall this many times faster (before temperament)."
+    },
+    "hungerComfortMinutes": {
+      "value": 5.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Holding or rocking a hungry baby calms it only this long before hunger takes over again."
+    },
+    "satiatedHunger": {
+      "value": 0.05,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Hunger level at which a feeding baby is full and turns away."
+    },
+    "nonNutritiveComfort": {
+      "value": 0.05,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress relief from briefly sucking when a feed is refused."
+    },
+    "gasPerFeedMinute": {
+      "value": 0.03,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Swallowed air added per minute of feeding."
+    },
+    "gasDecayPerMinute": {
+      "value": 0.003,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Gas that passes on its own per minute."
+    },
+    "gasDiscomfortAt": {
+      "value": 0.25,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Gas level at which it causes discomfort."
+    },
+    "gasCauseWeight": {
+      "value": 0.55,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by trapped gas."
+    },
+    "burpableGas": {
+      "value": 0.1,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Below this there is nothing to burp up."
+    },
+    "burpSuccessProb": {
+      "value": 0.6,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Chance that one burping attempt brings up a burp."
+    },
+    "gasPerBurp": {
+      "value": 0.3,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Gas released by one burp."
+    },
+    "spontaneousBurpPerMinute": {
+      "value": 0.1,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Burps per minute that come up on their own while the baby is held upright."
+    },
+    "playStimulationPerMinute": {
+      "value": 0.03,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Stimulation added per minute of play."
+    },
+    "stimulationDecayPerMinute": {
+      "value": 0.005,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Stimulation that wears off per minute."
+    },
+    "overstimAt": {
+      "value": 0.7,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Stimulation level at which the baby is overstimulated (before temperament)."
+    },
+    "overstimCauseWeight": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by overstimulation."
+    },
+    "settleMinutes": {
+      "value": 8.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Typical minutes of rocking or holding before a fussy spell or need for comfort settles (before temperament)."
+    },
+    "rockDrowsyFactor": {
+      "value": 0.75,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Rocking can make the baby drowsy at this fraction of its usual sleep-ready tiredness."
+    },
+    "transferStayAsleepProb": {
+      "value": 0.8,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Chance a sleeping baby stays asleep when put down (adjusted by temperament's transition sensitivity)."
+    },
+    "changeTransitionDistress": {
+      "value": 0.15,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress bump from a diaper change (scaled by transition sensitivity)."
+    },
+    "putDownTransitionDistress": {
+      "value": 0.1,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress bump when an awake baby who is not ready to sleep is put down (scaled by transition sensitivity)."
     }
   }
 }
