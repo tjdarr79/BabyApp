@@ -80,11 +80,17 @@ class SimulationHost(
         instances.remove(id)
     }
 
-    /** Catches every baby up to [nowWall] (an alarm fired, the app opened, the device rebooted). */
-    fun advanceAll(nowWall: Long): HostStep {
+    /**
+     * Catches every baby up to [nowWall] (an alarm fired, the app opened, the device rebooted). [predict] = false
+     * skips the look-ahead (bulk simulation); the alarm plan then falls back to safety re-checks.
+     */
+    fun advanceAll(
+        nowWall: Long,
+        predict: Boolean = true,
+    ): HostStep {
         val results =
             babies().associate { baby ->
-                baby.id to engine.advance(baby.config, baby.state, baby.time.toSim(nowWall))
+                baby.id to engine.advance(baby.config, baby.state, baby.time.toSim(nowWall), predict)
             }
         results.forEach { (id, result) -> instances[id] = instanceOf(this[id].config, this[id].time, result) }
         return step(nowWall, results)
@@ -95,7 +101,8 @@ class SimulationHost(
         id: BabyId,
         action: CareAction,
         nowWall: Long,
-    ): HostStep = update(id, nowWall) { engine.apply(it.config, it.state, action, it.time.toSim(nowWall)) }
+        predict: Boolean = true,
+    ): HostStep = update(id, nowWall) { engine.apply(it.config, it.state, action, it.time.toSim(nowWall), predict) }
 
     fun pause(
         id: BabyId,

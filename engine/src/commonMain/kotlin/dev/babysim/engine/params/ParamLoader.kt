@@ -10,6 +10,14 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 
+/** Where one parameter value comes from and whether the reviewer has signed it off. */
+data class Provenance(
+    val file: String,
+    val field: String,
+    val evidence: Evidence,
+    val reviewStatus: ReviewStatus,
+)
+
 /** Thrown when parameter files are incomplete or invalid. Lists every problem found, not just the first. */
 class ParamValidationException(
     val problems: List<String>,
@@ -32,6 +40,26 @@ object ParamLoader {
 
     /** The parameter files compiled into the engine from `engine/params/`. */
     fun bundled(): ParamSet = load(BundledParamFiles.files)
+
+    /** Provenance of every bundled value, for reports and the release check (docs/07 M9). */
+    fun bundledProvenance(): List<Provenance> =
+        BundledParamFiles.files.toSortedMap().flatMap { (path, text) ->
+            val values =
+                json
+                    .parseToJsonElement(text)
+                    .jsonObject
+                    .getValue("values")
+                    .jsonObject
+            values.map { (field, leaf) ->
+                val obj = leaf.jsonObject
+                Provenance(
+                    file = path,
+                    field = field,
+                    evidence = Evidence.valueOf((obj.getValue("evidence") as JsonPrimitive).content),
+                    reviewStatus = ReviewStatus.valueOf((obj.getValue("reviewStatus") as JsonPrimitive).content),
+                )
+            }
+        }
 
     fun load(files: Map<String, String>): ParamSet {
         val found = Found()

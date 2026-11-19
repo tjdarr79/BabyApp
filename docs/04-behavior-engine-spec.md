@@ -347,4 +347,10 @@ Where the implementation refines this spec:
   - `SchedulerPlanner`: request code `1000 + slot×16 + kind`. Wakes within 60 s share one alarm that fires at the **latest** of them, so nobody is woken early and nobody waits more than 60 s. Babies with no predicted event get a `SAFETY_RECHECK` 6 h out; paused babies get none.
   - `NotificationIds`: id `1000 + slot×16 + kind`, tag and group `baby:<id>`, channels from docs/03 §5. A care alert is posted on open or escalate and withdrawn on resolve or expire; auto-pause posts a notice. The app writes the text, naming the baby.
   - Audio: `StepResult.audio` is the baby's continuous sound (silent, sleep, fuss, settling, cry, intense cry). Audible events become one-shot `AudioCue`s. `AudioArbiter` plays one loop (highest priority, then earliest start, then lowest id) and only cues at least as important as the loop; the rest are reported as suppressed.
+- **Harness (M2.6).** Simulated caregivers live in `engine/.../caregiver/` (shared by the harness and `TwoBabySeventyTwoHourTest`). They see only what a person could (activity, need for attention, what is in progress, feed/sleep/wake times, recent action outcomes), never the hidden causes. They are stateless, so a saved run resumes exactly.
+  - `attentive`: present parent; responds to fussing and requests.
+  - `delayed`: away; responds only to requests, after 10–20 min.
+  - `absent`, `random`.
+  - `:harness` runs each band × temperament for N days × seeds (caregiver checks every 2 min) and reports the §10 metrics against docs/06 targets, with levers. Output: Markdown and CSV in `harness/reports/`.
+  - Baseline in `docs/reports/M2.6-baseline.md`. Alert-count targets are read from the `delayed` run, because an attentive parent pre-empts most alerts.
 - **Not yet modeled:** separation anxiety, pacifier, solids (post-MVP).

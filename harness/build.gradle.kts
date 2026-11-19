@@ -27,4 +27,13 @@ application {
 
 tasks.test {
     useJUnitPlatform()
+    // Golden report files; regenerate deliberately with `./gradlew :harness:test -PupdateGolden=true`.
+    systemProperty(
+        "harness.goldenDir",
+        layout.projectDirectory
+            .dir("src/test/resources/golden")
+            .asFile.absolutePath,
+    )
+    systemProperty("harness.updateGolden", providers.gradleProperty("updateGolden").getOrElse("false"))
+    inputs.dir(layout.projectDirectory.dir("src/test/resources/golden")).optional()
 }
