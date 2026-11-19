@@ -1,0 +1,46 @@
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+.gradletasknamecache
+
+# Kotlin
+.kotlin/
+*.class
+*.log
+
+# Android
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+output.json
+/app/release/
+
+# Signing / secrets
+*.keystore
+*.jks
+keystore.properties
+google-services.json
+.env
+.env.*
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.fleet/
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Simulation harness output
+reports/
