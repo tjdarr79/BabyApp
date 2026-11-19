@@ -27,6 +27,23 @@ data class BabyState(
     val timestamps: CareTimestamps = CareTimestamps(),
     val recentActions: List<RecordedAction> = emptyList(),
     val rng: RngBankState,
+    /** Per-cycle sampled thresholds (docs/04 §7.1). */
+    val thresholds: Thresholds = Thresholds(),
+    /** Remaining hazard budgets of armed stochastic processes (docs/04 §7.1). */
+    val budgets: Map<ProcessId, Double> = emptyMap(),
+    val sleep: SleepCycle? = null,
+    /** When a drowsy baby falls asleep if nothing disturbs it. */
+    val fallAsleepAt: SimInstant? = null,
+    val fussSpellEndsAt: SimInstant? = null,
+    val wantsContactUntil: SimInstant? = null,
+    /** Start of the current run of distress at or above the crying level (care-request sustain). */
+    val cryingLevelSince: SimInstant? = null,
+    /** Start of the current crying segment (unattended cap, docs/01 B1). */
+    val cryingSince: SimInstant? = null,
+    val lastInteractionAt: SimInstant? = null,
+    val unanswered: Unanswered = Unanswered(),
+    val nextCareRequestId: Long = 1,
+    val pause: PauseInfo? = null,
 ) {
     companion object {
         /** Fresh state for a newly configured baby. M2.3 replaces default drives with sampled starting values. */
@@ -90,6 +107,52 @@ data class CareTimestamps(
     val lastWakeAt: SimInstant? = null,
     val lastSoothedAt: SimInstant? = null,
     val lastBurpAt: SimInstant? = null,
+)
+
+/** Thresholds sampled once per cycle within the band's researched ranges (docs/04 §5). */
+@Serializable
+data class Thresholds(
+    /** Hunger level at which hunger becomes a cause of distress. 1.0 = the band's typical feed interval. */
+    val hungerCueAt: Double = 1.0,
+    /** Sleep pressure at which the baby becomes ready to sleep. 1.0 = the band's typical wake window. */
+    val sleepReadyAt: Double = 1.0,
+    /** Minutes of crying-level distress before a care request opens. */
+    val careSustainMinutes: Double = 3.0,
+)
+
+/** Stochastic processes driven by hazard budgets. */
+@Serializable
+enum class ProcessId {
+    VOID,
+    STOOL,
+    UNEXPLAINED_FUSS,
+    VOCAL,
+}
+
+@Serializable
+data class SleepCycle(
+    val cycleStartedAt: SimInstant,
+    val cycleEndsAt: SimInstant,
+)
+
+/** Tracks care requests that went unanswered since the caregiver last responded (docs/01 B1). */
+@Serializable
+data class Unanswered(
+    val expiredCount: Int = 0,
+    val firstUnansweredAt: SimInstant? = null,
+)
+
+@Serializable
+enum class PauseReason {
+    USER,
+    AUTO_UNANSWERED_REQUESTS,
+    AUTO_NO_RESPONSE,
+}
+
+@Serializable
+data class PauseInfo(
+    val reason: PauseReason,
+    val since: SimInstant,
 )
 
 /** Entry in the recent-caregiver-actions ring buffer (brief §7). Outcome is added in M2.4. */

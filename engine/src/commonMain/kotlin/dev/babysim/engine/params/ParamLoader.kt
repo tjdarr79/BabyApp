@@ -17,12 +17,13 @@ class ParamValidationException(
 
 /**
  * Loads and validates parameter files (docs/04 §6). Files are keyed by path relative to `engine/params/`,
- * e.g. `age/M2_3.json`, `temperament/AVERAGE.json`.
+ * e.g. `age/M2_3.json`, `temperament/AVERAGE.json`, `model.json`.
  */
 object ParamLoader {
     private const val AGE_DIR = "age/"
     private const val TEMPERAMENT_DIR = "temperament/"
     private const val JSON_EXT = ".json"
+    private const val MODEL_FILE = "model.json"
 
     private val requiredLeafKeys = listOf("value", "source", "evidence", "reviewStatus")
     private val probabilityFields = setOf("feedAcceptMin", "circadianStrength", "selfSettleProbNight")
@@ -33,47 +34,75 @@ object ParamLoader {
     fun bundled(): ParamSet = load(BundledParamFiles.files)
 
     fun load(files: Map<String, String>): ParamSet {
+        val found = Found()
+        for ((path, text) in files.toSortedMap()) {
+            val element = parseOrNull(path, text, found.problems) ?: continue
+            checkProvenance(path, element, found.problems)
+            collect(path, element, found)
+        }
+        found.checkComplete()
+        if (found.problems.isNotEmpty()) throw ParamValidationException(found.problems)
+        return ParamSet(
+            version = found.versions.single(),
+            ages = found.ages,
+            temperaments = found.temperaments,
+            model = checkNotNull(found.model),
+        )
+    }
+
+    /** What the files provided so far, plus every problem found. */
+    private class Found {
         val problems = mutableListOf<String>()
         val ages = mutableMapOf<AgeBandId, AgeProfile>()
         val temperaments = mutableMapOf<TemperamentId, TemperamentProfile>()
+        var model: ModelProfile? = null
         val versions = mutableSetOf<Int>()
 
-        for ((path, text) in files.toSortedMap()) {
-            val element = parseOrNull(path, text, problems) ?: continue
-            checkProvenance(path, element, problems)
-            when {
-                path.startsWith(AGE_DIR) ->
-                    decode(path, problems) { json.decodeFromJsonElement(AgeProfileFile.serializer(), element) }
-                        ?.let { file ->
-                            expectFileName(path, AGE_DIR, file.ageBand.name, problems)
-                            checkProbabilities(path, element, problems)
-                            ages[file.ageBand] = file.values
-                            versions += file.paramSetVersion
-                        }
-
-                path.startsWith(TEMPERAMENT_DIR) ->
-                    decode(path, problems) { json.decodeFromJsonElement(TemperamentProfileFile.serializer(), element) }
-                        ?.let { file ->
-                            expectFileName(path, TEMPERAMENT_DIR, file.temperament.name, problems)
-                            temperaments[file.temperament] = file.values
-                            versions += file.paramSetVersion
-                        }
-
-                else -> problems += "$path: not under $AGE_DIR or $TEMPERAMENT_DIR"
+        fun checkComplete() {
+            AgeBandId.entries.filterNot { it in ages }.forEach {
+                problems += "missing age profile: $AGE_DIR${it.name}$JSON_EXT"
             }
+            TemperamentId.entries.filterNot { it in temperaments }.forEach {
+                problems += "missing temperament profile: $TEMPERAMENT_DIR${it.name}$JSON_EXT"
+            }
+            if (model == null) problems += "missing model profile: $MODEL_FILE"
+            if (versions.size > 1) problems += "files disagree on paramSetVersion: ${versions.sorted()}"
         }
+    }
 
-        AgeBandId.entries.filterNot { it in ages }.forEach {
-            problems +=
-                "missing age profile: $AGE_DIR${it.name}$JSON_EXT"
-        }
-        TemperamentId.entries.filterNot { it in temperaments }.forEach {
-            problems += "missing temperament profile: $TEMPERAMENT_DIR${it.name}$JSON_EXT"
-        }
-        if (versions.size > 1) problems += "files disagree on paramSetVersion: ${versions.sorted()}"
+    private fun collect(
+        path: String,
+        element: JsonElement,
+        found: Found,
+    ) {
+        val problems = found.problems
+        when {
+            path.startsWith(AGE_DIR) ->
+                decode(path, problems) { json.decodeFromJsonElement(AgeProfileFile.serializer(), element) }
+                    ?.let { file ->
+                        expectFileName(path, AGE_DIR, file.ageBand.name, problems)
+                        checkProbabilities(path, element, problems)
+                        found.ages[file.ageBand] = file.values
+                        found.versions += file.paramSetVersion
+                    }
 
-        if (problems.isNotEmpty()) throw ParamValidationException(problems)
-        return ParamSet(version = versions.single(), ages = ages, temperaments = temperaments)
+            path.startsWith(TEMPERAMENT_DIR) ->
+                decode(path, problems) { json.decodeFromJsonElement(TemperamentProfileFile.serializer(), element) }
+                    ?.let { file ->
+                        expectFileName(path, TEMPERAMENT_DIR, file.temperament.name, problems)
+                        found.temperaments[file.temperament] = file.values
+                        found.versions += file.paramSetVersion
+                    }
+
+            path == MODEL_FILE ->
+                decode(path, problems) { json.decodeFromJsonElement(ModelProfileFile.serializer(), element) }
+                    ?.let { file ->
+                        found.model = file.values
+                        found.versions += file.paramSetVersion
+                    }
+
+            else -> problems += "$path: not $MODEL_FILE and not under $AGE_DIR or $TEMPERAMENT_DIR"
+        }
     }
 
     private fun parseOrNull(

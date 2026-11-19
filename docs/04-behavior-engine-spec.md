@@ -323,3 +323,15 @@ The user never learned the cause was "tired + gas". They inferred it by eliminat
 
 ## 13. Out of scope for the engine v1
 Toddler behaviors, separation anxiety process, solids, pacifier, illness/teething/colic overlays, two-baby UI. Enum slots and schema extension points exist. Behavior is not implemented.
+
+## 14. As built (M2.3)
+
+Where the implementation refines this spec:
+
+- **Tick grid.** State changes only on ticks at absolute multiples of 30 s (`TickRunner`). `advance` processes every tick in (`lastAdvancedTo`, `to`]. That makes catch-up split anywhere bit-identical (`CatchUpEquivalencePropertyTest`, 1,000 random cases).
+- **Look-ahead.** `StepResult` carries `nextEventAt` (next event of any kind) and `nextWakeAt` (next alert-worthy event: care request opened or escalated, auto-pause). Both come from simulating forward up to 24 h on a copy, so they are exact (`NextWakePredictionTest`). Null when paused or nothing happens within 24 h; the host then schedules a safety re-check (M2.5). The audio directive (§9) arrives with the audio arbiter in M2.5.
+- **Model constants.** Band-independent knobs (activity thresholds, cause weights, diaper rates, circadian effects, the auto-pause rule) live in `engine/params/model.json`, sourced and `UNREVIEWED` like every other value.
+- **Engine API** takes the `BabyConfig` with each call: `initialize(config, at)`, `advance(config, state, to)`, `pause`, `resume`. Local time of day comes from an injected `LocalClock`.
+- **Pause/resume.** While paused nothing integrates. On resume, running timers and time-since timestamps shift by the paused duration (engine time skips the pause; history keeps real times), and the unanswered-request count restarts.
+- **Sleepiness.** A tired baby that is not crying grows drowsy and falls asleep on its own; crying cancels drowsiness. Tiredness becomes a distress cause only when something keeps the baby from drowsing.
+- **Not yet modeled (M2.4):** care actions, feeding (hunger keeps rising until fed), gas/burping, stimulation and overstimulation.

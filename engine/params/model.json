@@ -1,0 +1,341 @@
+{
+  "paramSetVersion": 1,
+  "values": {
+    "distressRisePerMinute": {
+      "value": 0.08,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How fast distress climbs toward what the baby's needs call for."
+    },
+    "distressFallPerMinute": {
+      "value": 0.04,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How fast distress falls once needs ease (no soothing)."
+    },
+    "fussThreshold": {
+      "value": 0.25,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress level at which the baby starts fussing."
+    },
+    "cryThreshold": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress level at which fussing becomes crying."
+    },
+    "intenseCryThreshold": {
+      "value": 0.8,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress level for intense crying."
+    },
+    "calmThreshold": {
+      "value": 0.15,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress level counted as calm again."
+    },
+    "intensityBiasStep": {
+      "value": 0.1,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How far one step of a temperament's cry-intensity shift moves the thresholds."
+    },
+    "escalateAfterMinutes": {
+      "value": 10.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Minutes between repeated alerts while a care request stays open."
+    },
+    "maxEscalationLevel": {
+      "value": 3,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Highest alert level."
+    },
+    "hungerCauseWeight": {
+      "value": 0.6,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by hunger at the hunger cue."
+    },
+    "hungerOverdueGain": {
+      "value": 1.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Extra distress per unit of hunger past the cue."
+    },
+    "tiredCauseWeight": {
+      "value": 0.35,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by being tired."
+    },
+    "overtiredMargin": {
+      "value": 0.25,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Sleep pressure above the sleep-ready point that counts as overtired."
+    },
+    "overtiredCauseWeight": {
+      "value": 0.7,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by being overtired."
+    },
+    "diaperCauseWeight": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by an uncomfortable diaper."
+    },
+    "diaperCueAt": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Diaper discomfort level at which the baby objects."
+    },
+    "diaperDiscomfortPerMinuteWet": {
+      "value": 0.004,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Discomfort gain per minute in a fully wet diaper."
+    },
+    "diaperDiscomfortPerMinuteSoiled": {
+      "value": 0.02,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Discomfort gain per minute in a soiled diaper."
+    },
+    "wetnessPerVoid": {
+      "value": 0.35,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How much one wetting fills the diaper (1 = saturated)."
+    },
+    "postFeedVoidMultiplier": {
+      "value": 2.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Wetting is this many times more likely shortly after a feed."
+    },
+    "postFeedVoidWindowMinutes": {
+      "value": 60.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How long after a feed the higher wetting rate lasts."
+    },
+    "unexplainedFussCauseWeight": {
+      "value": 0.6,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress during a fussy spell with no clear cause."
+    },
+    "unexplainedFussPerAwakeHour": {
+      "value": 0.25,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Fussy spells with no clear cause, per awake hour (before temperament and evening effects)."
+    },
+    "eveningFussMultiplier": {
+      "value": 2.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Fussy spells are this many times more likely in the evening, for bands with evening clustering."
+    },
+    "eveningStartLocalMinutes": {
+      "value": 960,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Evening fussiness window start (minutes after midnight, 16:00)."
+    },
+    "eveningEndLocalMinutes": {
+      "value": 1380,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Evening fussiness window end (23:00)."
+    },
+    "fussSpellMinutes": {
+      "value": {
+        "min": 5.0,
+        "typical": 10.0,
+        "max": 20.0
+      },
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Length of a fussy spell, or of wanting comfort after a night waking."
+    },
+    "boredCauseWeight": {
+      "value": 0.35,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by boredom (4 months and older)."
+    },
+    "wantsContactCauseWeight": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress contributed by wanting to be held."
+    },
+    "causeStackBonus": {
+      "value": 0.15,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Extra distress for each additional need on top of the strongest one."
+    },
+    "drowsyToSleepMinutes": {
+      "value": {
+        "min": 5.0,
+        "typical": 8.0,
+        "max": 15.0
+      },
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Minutes from drowsy to asleep when nothing disturbs the baby."
+    },
+    "restedSleepPressure": {
+      "value": 0.15,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Sleep pressure at or below which the baby is rested enough to wake."
+    },
+    "nightHungerRateScale": {
+      "value": 0.7,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "At full day/night rhythm, hunger builds this fraction as fast at night."
+    },
+    "nightSleepPressureDecayScale": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "At full day/night rhythm, tiredness wears off this fraction as fast at night (longer night sleep)."
+    },
+    "nightSleepPressureRiseBoost": {
+      "value": 1.0,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "At full day/night rhythm, tiredness builds this much faster at night (1 = twice as fast)."
+    },
+    "sleepNoiseProbPerArousal": {
+      "value": 0.4,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Chance of an audible sleep noise when the baby stirs between sleep cycles."
+    },
+    "wakeTransitionDistress": {
+      "value": 0.1,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Distress bump on waking (scaled by temperament's transition sensitivity)."
+    },
+    "moodRatePerMinute": {
+      "value": 0.01,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How quickly mood follows recent distress."
+    },
+    "moodVocalGain": {
+      "value": 0.5,
+      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "How much a good mood increases happy sounds."
+    },
+    "autoPauseUnansweredRequests": {
+      "value": 3,
+      "source": "DESIGN_ASSUMPTION: product rule, not a behavior norm",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Owner decision 2026-11-19 (docs/01 B1): auto-pause after 3 unanswered care requests or 4 h without response."
+    },
+    "autoPauseHoursWithoutResponse": {
+      "value": 4.0,
+      "source": "DESIGN_ASSUMPTION: product rule, not a behavior norm",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Owner decision 2026-11-19 (docs/01 B1): auto-pause after 3 unanswered care requests or 4 h without response."
+    }
+  }
+}

@@ -81,6 +81,23 @@ class SnapshotSerializationRoundTripTest {
     }
 
     @Test
+    fun engineStatesRoundTripAndContinueIdentically() {
+        val engine =
+            dev.babysim.engine.EngineFixtures
+                .engine()
+        for (hours in listOf(1, 5, 9, 17)) {
+            val mid = engine.advance(config, engine.initialize(config, t0).state, t0 + (hours * 60).minutes).state
+            val restored = SnapshotCodec.decode(SnapshotCodec.encode(mid))
+            assertEquals(mid, restored, "round trip at $hours h")
+            assertEquals(
+                engine.advance(config, mid, t0 + 30.minutes * 48),
+                engine.advance(config, restored, t0 + 30.minutes * 48),
+                "continues identically after a round trip at $hours h",
+            )
+        }
+    }
+
+    @Test
     fun rngContinuesIdenticallyAfterRoundTrip() {
         val state = populatedState()
         val restored = SnapshotCodec.decode(SnapshotCodec.encode(state))

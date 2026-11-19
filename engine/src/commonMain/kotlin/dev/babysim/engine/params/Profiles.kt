@@ -77,6 +77,7 @@ data class ParamSet(
     val version: Int,
     val ages: Map<AgeBandId, AgeProfile>,
     val temperaments: Map<TemperamentId, TemperamentProfile>,
+    val model: ModelProfile,
 ) {
     fun age(id: AgeBandId): AgeProfile = ages.getValue(id)
 

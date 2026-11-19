@@ -119,6 +119,12 @@ class ParamSchemaTest {
     }
 
     @Test
+    fun missingModelFileFailsLoading() {
+        val e = assertFailsWith<ParamValidationException> { ParamLoader.load(bundled - "model.json") }
+        assertTrue(e.problems.any { "missing model profile: model.json" in it }, e.message)
+    }
+
+    @Test
     fun misnamedFileFailsLoading() {
         val files =
             bundled - "temperament/AVERAGE.json" +
