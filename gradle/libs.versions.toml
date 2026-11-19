@@ -1,0 +1,14 @@
+[versions]
+kotlin = "2.4.21"
+detekt = "1.23.8"
+# Kotlin version detekt 1.23.8 was compiled against; detekt's own classpath is pinned to it.
+detektKotlin = "2.0.21"
+ktlintGradle = "14.2.0"
+
+[libraries]
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintGradle" }

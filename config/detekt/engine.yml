@@ -1,0 +1,13 @@
+# Extra rules for :engine only (CLAUDE.md engine rules).
+style:
+  ForbiddenImport:
+    active: true
+    # jvmTest holds JVM-only tooling tests (e.g. source scanning); shipped engine code may not import these.
+    excludes: ['**/jvmTest/**']
+    imports:
+      - value: 'android.*'
+        reason: ':engine must have zero Android dependencies.'
+      - value: 'java.*'
+        reason: ':engine is Kotlin Multiplatform; use kotlin.* / kotlinx.* instead of java.*.'
+      - value: 'javax.*'
+        reason: ':engine is Kotlin Multiplatform; no JVM-only APIs.'

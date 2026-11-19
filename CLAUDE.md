@@ -6,7 +6,9 @@
 - Work proceeds milestone by milestone (`docs/07-milestones.md`). **One commit per milestone.** Don't start a milestone marked ⛔ without owner approval.
 
 ## Current phase
-Phase 1 (documents) is complete. Owner decisions are recorded (2026-11-19). No application code exists yet. **Explicit go-ahead is still required before M2.1 (engine skeleton).** M3 platform spike is approved.
+Phase 1 (documents) is complete. Owner decisions are recorded (2026-11-19). **M2.1 (engine skeleton) is done:** modules `:engine` (KMP, jvm target) and `:harness` (JVM CLI), ktlint + detekt, a forbidden-import guard on `:engine` (detekt rule + `NoForbiddenImportsTest`). Next: M2.2 (core types, RNG, parameter loading). M3 platform spike is approved.
+
+Toolchain: Gradle wrapper 8.14.3, JDK 21 (bytecode target 17), Kotlin 2.4.21, detekt 1.23.8 (its classpath is pinned to Kotlin 2.0.21 in the root build), ktlint-gradle 14.2.0. Google's Maven repo (`dl.google.com`) is **blocked in the current cloud environment**. The network allowlist must include it before M4 (Android `:app`).
 
 ## Architecture in one paragraph
 Pure-Kotlin behavior engine in `:engine` (Kotlin Multiplatform, `commonMain`, `jvm` target only for now) → `SimulationHost` owns N independent `BabyInstance`s → Android `:app` (Compose, Room, Media3, AlarmManager) persists snapshots, schedules OS alarms from the engine's `nextWakeAt`, posts notifications, and plays audio. There is no long-running service keeping the baby alive: every wake catches up from the last persisted timestamp. `:harness` is a JVM CLI that produces behavior reports.
@@ -30,7 +32,7 @@ Pure-Kotlin behavior engine in `:engine` (Kotlin Multiplatform, `commonMain`, `j
 - Hidden cause: the UI never reads the engine's causes. Feedback is non-punitive. No scores.
 - Separate audible activity from care-required events.
 
-## Commands (valid once M2.1 lands)
+## Commands
 | Purpose | Command |
 |---|---|
 | All tests | `./gradlew test -q` |

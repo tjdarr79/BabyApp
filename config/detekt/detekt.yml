@@ -1,0 +1,5 @@
+# Shared detekt rules. Builds on detekt's default config.
+style:
+  MagicNumber:
+    # Behavior numbers belong in parameter JSON (CLAUDE.md); tests may use literals.
+    excludes: ['**/commonTest/**', '**/jvmTest/**', '**/test/**']
