@@ -2,7 +2,7 @@
 
 Engine schema v1, parameter set v1. 3 seeds per combination; the caregiver checks every 2 min. Day = 07:00–19:00, night = 19:00–07:00. Day 1 = the first 24 h; median, p10 and p90 are across seeds over all 2 days.
 
-All parameter values are `UNREVIEWED` until the childcare reviewer signs off. Targets come from docs/06.
+Parameter values stay `UNREVIEWED` until the childcare reviewer signs off (counts below). Targets come from docs/06.
 A metric marked **OUT** is outside its target; *Levers* names the parameters that move it.
 
 ## Summary
@@ -13,7 +13,7 @@ A metric marked **OUT** is outside its target; *Levers* names the parameters tha
 
 ## Parameters in use
 
-201 values, 201 `UNREVIEWED`. By evidence: PEER_REVIEWED 7, GUIDANCE 17, SECONDARY 8, DESIGN_ASSUMPTION 169.
+201 values, 184 `UNREVIEWED`. By evidence: PEER_REVIEWED 6, GUIDANCE 13, SECONDARY 7, DESIGN_ASSUMPTION 175.
 
 `DESIGN_ASSUMPTION` values by file (no adequate source; the reviewer decides these):
 
@@ -21,7 +21,7 @@ A metric marked **OUT** is outside its target; *Levers* names the parameters tha
 - `age/M2_3.json`: feedDurationMinutes, feedAcceptMin, napsPerDay, wakeWindowMinutes, fussCryMinutesPer24h, circadianStrength, vocalRatePerAwakeHour, boredAfterMinutes, careSustainMinutes, crySegmentMaxMinutes, selfSettleProbNight
 - `age/M4_6.json`: feedDurationMinutes, feedAcceptMin, napsPerDay, wakeWindowMinutes, sleepCycleMinutes, fussCryMinutesPer24h, eveningFussClustering, circadianStrength, wetDiapersPerDay, vocalRatePerAwakeHour, boredAfterMinutes, careSustainMinutes, crySegmentMaxMinutes, selfSettleProbNight
 - `age/M7_9.json`: feedIntervalMinutes, feedDurationMinutes, feedsPer24h, feedAcceptMin, napsPerDay, wakeWindowMinutes, sleepCycleMinutes, fussCryMinutesPer24h, eveningFussClustering, circadianStrength, wetDiapersPerDay, soiledDiapersPerDay, vocalRatePerAwakeHour, boredAfterMinutes, careSustainMinutes, crySegmentMaxMinutes, selfSettleProbNight
-- `age/NEWBORN.json`: feedDurationMinutes, feedAcceptMin, wakeWindowMinutes, fussCryMinutesPer24h, circadianStrength, vocalRatePerAwakeHour, boredAfterMinutes, careSustainMinutes, crySegmentMaxMinutes, selfSettleProbNight
+- `age/NEWBORN.json`: feedDurationMinutes, feedsPer24h, feedAcceptMin, totalSleepHours24, napsPerDay, wakeWindowMinutes, nightWakings, fussCryMinutesPer24h, circadianStrength, wetDiapersPerDay, soiledDiapersPerDay, vocalRatePerAwakeHour, boredAfterMinutes, careSustainMinutes, crySegmentMaxMinutes, selfSettleProbNight
 - `model.json`: distressRisePerMinute, distressFallPerMinute, fussThreshold, cryThreshold, intenseCryThreshold, calmThreshold, intensityBiasStep, escalateAfterMinutes, maxEscalationLevel, hungerCauseWeight, hungerOverdueGain, tiredCauseWeight, overtiredMargin, overtiredCauseWeight, diaperCauseWeight, diaperCueAt, diaperDiscomfortPerMinuteWet, diaperDiscomfortPerMinuteSoiled, wetnessPerVoid, postFeedVoidMultiplier, postFeedVoidWindowMinutes, unexplainedFussCauseWeight, unexplainedFussPerAwakeHour, eveningFussMultiplier, eveningStartLocalMinutes, eveningEndLocalMinutes, fussSpellMinutes, boredCauseWeight, wantsContactCauseWeight, causeStackBonus, drowsyToSleepMinutes, restedSleepPressure, nightHungerRateScale, nightSleepPressureDecayScale, nightSleepPressureRiseBoost, sleepNoiseProbPerArousal, wakeTransitionDistress, moodRatePerMinute, moodVocalGain, autoPauseUnansweredRequests, autoPauseHoursWithoutResponse, actionEffects, partialReliefFactor, worsenFactor, sootheFallMultiplier, hungerComfortMinutes, satiatedHunger, nonNutritiveComfort, gasPerFeedMinute, gasDecayPerMinute, gasDiscomfortAt, gasCauseWeight, burpableGas, burpSuccessProb, gasPerBurp, spontaneousBurpPerMinute, playStimulationPerMinute, stimulationDecayPerMinute, overstimAt, overstimCauseWeight, settleMinutes, rockDrowsyFactor, transferStayAsleepProb, changeTransitionDistress, putDownTransitionDistress
 - `temperament/AVERAGE.json`: rhythmicitySigmaScale, sootheTimeScale, unexplainedFussHazardScale, careSustainScale, overstimThresholdScale, transitionDistress, selfSettleScale, contentVocalRateScale, cryIntensityBias
 - `temperament/DEMANDING.json`: rhythmicitySigmaScale, sootheTimeScale, unexplainedFussHazardScale, careSustainScale, overstimThresholdScale, transitionDistress, selfSettleScale, contentVocalRateScale, cryIntensityBias

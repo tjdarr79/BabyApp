@@ -70,7 +70,7 @@ object Report {
             appendLine(settings)
             appendLine()
             appendLine(
-                "All parameter values are `UNREVIEWED` until the childcare reviewer signs off. " +
+                "Parameter values stay `UNREVIEWED` until the childcare reviewer signs off (counts below). " +
                     "Targets come from docs/06.",
             )
             appendLine("A metric marked **OUT** is outside its target; *Levers* names the parameters that move it.")

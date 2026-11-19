@@ -14,6 +14,7 @@ Priority: **P0** = blocks Milestone 2 (engine). **P1** = blocks Steps 3–5. **P
 | B1 unattended baby | **Approved as proposed:** auto-pause after 3 consecutive unanswered care requests or 4 h without response. No penalty |
 | Q-06-1 crying amount (`06`) | **Target the lower half of real-infant norms.** Revisit during real-device testing (M9) and raise if testers want more |
 | A4 audio budget | **Research sound libraries.** See `08-audio-sourcing.md` |
+| Newborn band review | **Childcare reviewer, 17 of 20 values applied** (7 kept, 10 changed toward a doll-friendly simulation). Held: `sleepCycleMinutes` (reviewer meant nap length 2–3 h, which the cycle length doesn't set), `fussCryMinutesPer24h` (reviewer wrote "3": 3-minute spells 16:00–24:00, or 3 minutes per day?), `crySegmentMaxMinutes` 5 (requests would expire after 5 min, so an away caregiver auto-pauses on day 1) |
 
 ---
 

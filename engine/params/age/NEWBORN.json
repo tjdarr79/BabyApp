@@ -14,65 +14,69 @@
         "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/How-Often-to-Breastfeed.aspx"
       ],
       "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED",
+      "reviewStatus": "REVIEWED_OK",
       "note": "Day interval; night gap should not exceed ~4 h (S3)."
     },
     "feedDurationMinutes": {
-      "value": {
-        "min": 10.0,
-        "typical": 15.0,
-        "max": 25.0
-      },
-      "source": "DESIGN_ASSUMPTION: no bottle-feed duration source; breastfeeding reference 10 + up to 15 min. Context: AAP/HealthyChildren symptom checker: Breastfeeding questions",
-      "sourceUrls": [
-        "https://www.healthychildren.org/English/tips-tools/symptom-checker/Pages/symptomviewer.aspx?symptom=Breast-Feeding+Questions"
-      ],
-      "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
-    },
-    "feedsPer24h": {
       "value": {
         "min": 8.0,
         "typical": 10.0,
         "max": 12.0
       },
-      "source": "CDC: How Much and How Often to Feed Infant Formula; AAP/HealthyChildren: How Often to Breastfeed; CDC: Newborn Breastfeeding Basics (docs/06)",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet): \"Since this is a simulation, the somewhat shorter feedings will suffice\". Previously 10–25 (typical 15) (DESIGN_ASSUMPTION): no bottle-feed duration source; breastfeeding reference 10 + up to 15 min. Context: AAP/HealthyChildren symptom checker: Breastfeeding questions",
+      "sourceUrls": [
+        "https://www.healthychildren.org/English/tips-tools/symptom-checker/Pages/symptomviewer.aspx?symptom=Breast-Feeding+Questions"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED"
+    },
+    "feedsPer24h": {
+      "value": {
+        "min": 6.0,
+        "typical": 7.0,
+        "max": 8.0
+      },
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet): \"For this simulation, fewer feedings, specifically at night, will be sufficient\". Previously 8–12 (typical 10) (GUIDANCE): CDC: How Much and How Often to Feed Infant Formula; AAP/HealthyChildren: How Often to Breastfeed; CDC: Newborn Breastfeeding Basics (docs/06)",
       "sourceUrls": [
         "https://www.cdc.gov/infant-toddler-nutrition/formula-feeding/how-much-and-how-often.html",
         "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/How-Often-to-Breastfeed.aspx",
         "https://www.cdc.gov/infant-toddler-nutrition/breastfeeding/newborn-basics.html"
       ],
-      "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED"
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED"
     },
     "feedAcceptMin": {
-      "value": 0.5,
-      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "value": 0.0,
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet): \"For a doll simulation.  This is not relevant\". Previously 0.5 (DESIGN_ASSUMPTION): no adequate source found; reviewer to decide (docs/06)",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_CHANGED"
     },
     "totalSleepHours24": {
       "value": {
-        "min": 14.0,
-        "typical": 15.5,
-        "max": 17.0
+        "min": 16.0,
+        "typical": 17.0,
+        "max": 18.0
       },
-      "source": "Hirshkowitz et al. 2015, National Sleep Foundation sleep duration recommendations (docs/06)",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet): \"All sleep in a night, naps during the day for this simulation\". Previously 14–17 (typical 15.5) (PEER_REVIEWED): Hirshkowitz et al. 2015, National Sleep Foundation sleep duration recommendations (docs/06)",
       "sourceUrls": [
         "https://pubmed.ncbi.nlm.nih.gov/29073412/"
       ],
-      "evidence": "PEER_REVIEWED",
-      "reviewStatus": "UNREVIEWED"
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED"
     },
     "napsPerDay": {
-      "value": null,
-      "source": "BC Children's Hospital: Healthy Sleep for Kids, Newborns (docs/06)",
+      "value": {
+        "min": 3.0,
+        "typical": 4.0,
+        "max": 5.0
+      },
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet): \"A 2- to 3-hour nap every four hours per day, but this does not include nights and may be subject to change\". Previously null (GUIDANCE): BC Children's Hospital: Healthy Sleep for Kids, Newborns (docs/06)",
       "sourceUrls": [
         "https://www.bcchr.ca/healthysleepforkids/newborns"
       ],
-      "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED",
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED",
       "note": "No distinct naps: sleep is spread across day and night (circadian rhythm not yet present)."
     },
     "wakeWindowMinutes": {
@@ -86,7 +90,7 @@
         "https://www.romper.com/parenting/wake-windows-infant-sleep-evidence-based"
       ],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_OK"
     },
     "sleepCycleMinutes": {
       "value": {
@@ -103,17 +107,17 @@
     },
     "nightWakings": {
       "value": {
-        "min": 2.0,
-        "typical": 3.0,
-        "max": 4.0
+        "min": 1.0,
+        "typical": 2.0,
+        "max": 2.0
       },
-      "source": "AAP/HealthyChildren: How Often to Breastfeed; Galland et al. 2012, Normal sleep patterns in infants and children (systematic review) (docs/06)",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet): \"This is for a simulation, not a real baby, so fewer night wakings are fine\". Previously 2–4 (typical 3) (GUIDANCE): AAP/HealthyChildren: How Often to Breastfeed; Galland et al. 2012, Normal sleep patterns in infants and children (systematic review) (docs/06)",
       "sourceUrls": [
         "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/How-Often-to-Breastfeed.aspx",
         "https://pubmed.ncbi.nlm.nih.gov/21784676/"
       ],
-      "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED",
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED",
       "note": "Derived from 8-12 feeds and <=4 h night gap (S3). S8 reports ~1.7 parent-reported for 0-2 m."
     },
     "fussCryMinutesPer24h": {
@@ -137,47 +141,47 @@
         "https://www.melvinkonner.com/images/PDFs/articles/Barr%20Crying%20Cult%20Specificity.pdf"
       ],
       "evidence": "PEER_REVIEWED",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_OK"
     },
     "circadianStrength": {
       "value": {
-        "min": 0.0,
-        "typical": 0.05,
-        "max": 0.1
+        "min": 0.9,
+        "typical": 1.0,
+        "max": 1.0
       },
-      "source": "DESIGN_ASSUMPTION: newborns show no circadian rhythm; small nonzero allowance. Context: BC Children's Hospital: Healthy Sleep for Kids, Newborns",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet). Previously 0–0.1 (typical 0.05) (DESIGN_ASSUMPTION): newborns show no circadian rhythm; small nonzero allowance. Context: BC Children's Hospital: Healthy Sleep for Kids, Newborns",
       "sourceUrls": [
         "https://www.bcchr.ca/healthysleepforkids/newborns"
       ],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_CHANGED"
     },
     "wetDiapersPerDay": {
       "value": {
         "min": 6.0,
-        "typical": 8.0,
-        "max": 10.0
+        "typical": 6.0,
+        "max": 8.0
       },
-      "source": "AAP/HealthyChildren: How to Tell if Your Breastfed Baby is Getting Enough Milk (docs/06)",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet). Previously 6–10 (typical 8) (GUIDANCE): AAP/HealthyChildren: How to Tell if Your Breastfed Baby is Getting Enough Milk (docs/06)",
       "sourceUrls": [
         "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/How-to-Tell-if-Baby-is-Getting-Enough-Milk.aspx"
       ],
-      "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED",
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED",
       "note": "S13 gives >= 6/day by day 5-7; upper bound is a design choice."
     },
     "soiledDiapersPerDay": {
       "value": {
-        "min": 3.0,
-        "typical": 4.0,
-        "max": 5.0
+        "min": 1.0,
+        "typical": 2.0,
+        "max": 3.0
       },
-      "source": "Flo Health: How many diapers does a newborn use (docs/06)",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet). Previously 3–5 (typical 4) (SECONDARY): Flo Health: How many diapers does a newborn use (docs/06)",
       "sourceUrls": [
         "https://flo.health/being-a-mom/your-baby/baby-care-and-feeding/how-many-diapers-does-a-newborn-use"
       ],
-      "evidence": "SECONDARY",
-      "reviewStatus": "UNREVIEWED",
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED",
       "note": "Commercial secondary source."
     },
     "vocalRepertoire": {
@@ -194,26 +198,26 @@
         "https://www.cdc.gov/act-early/resources/milestones-checklist-by-age.html"
       ],
       "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED",
+      "reviewStatus": "REVIEWED_OK",
       "note": "No coos yet: sounds other than crying are expected by ~2 months (S15)."
     },
     "vocalRatePerAwakeHour": {
       "value": {
-        "min": 2.0,
-        "typical": 4.0,
-        "max": 6.0
+        "min": 4.0,
+        "typical": 6.0,
+        "max": 8.0
       },
-      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet). Previously 2–6 (typical 4) (DESIGN_ASSUMPTION): no adequate source found; reviewer to decide (docs/06)",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_CHANGED"
     },
     "boredAfterMinutes": {
       "value": null,
       "source": "DESIGN_ASSUMPTION: boredom not modeled below ~4 months",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_OK"
     },
     "careSustainMinutes": {
       "value": {
@@ -224,7 +228,7 @@
       "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_OK"
     },
     "crySegmentMaxMinutes": {
       "value": 30.0,
@@ -242,7 +246,7 @@
       "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_OK"
     }
   }
 }
