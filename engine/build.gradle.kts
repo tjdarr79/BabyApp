@@ -42,3 +42,10 @@ tasks.named<Test>("jvmTest") {
             .asFile.absolutePath,
     )
 }
+
+// KMP has no `test` task; alias it so `./gradlew test` (CLAUDE.md) also runs engine tests.
+tasks.register("test") {
+    group = "verification"
+    description = "Runs all engine tests (alias for jvmTest)."
+    dependsOn("jvmTest")
+}
