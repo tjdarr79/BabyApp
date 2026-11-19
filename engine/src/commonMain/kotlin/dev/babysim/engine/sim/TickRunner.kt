@@ -14,7 +14,6 @@ import dev.babysim.engine.random.RngStreamId
 import dev.babysim.engine.random.nextBernoulli
 import dev.babysim.engine.random.nextDouble
 import dev.babysim.engine.random.nextExponential
-import dev.babysim.engine.state.CareRequest
 import dev.babysim.engine.state.PauseInfo
 import dev.babysim.engine.state.PauseReason
 import dev.babysim.engine.state.ProcessId
@@ -38,6 +37,7 @@ internal class TickRunner(
     private val model = rates.model
     private val age = rates.age
     private val temperament = rates.temperament
+    private val requests = CareRequests(rates, this)
 
     fun tick(
         w: Work,
@@ -54,7 +54,7 @@ internal class TickRunner(
         updateDistress(w, t)
         updateActivity(w, t, out)
         updateMood(w)
-        careRequests(w, t, bank, out)
+        requests.update(w, t, bank, out)
         cryCap(w, bank, t, out)
         autoPause(w, t, out)
     }
@@ -291,8 +291,17 @@ internal class TickRunner(
         val stream = bank.stream(RngStreamId.AROUSAL)
         val needsCare = w.hunger >= w.thresholds.hungerCueAt || w.diaperDiscomfort >= model.diaperCueAt.value
         val rested = w.sleepPressure <= model.restedSleepPressure.value
+        val napUntil = w.sleep?.napUntil?.takeUnless { isNight(t) }
         when {
             needsCare -> wake(w, bank, t, wantsContact = false, out)
+            napUntil != null ->
+                if (t <
+                    napUntil
+                ) {
+                    startCycle(w, bank, t)
+                } else {
+                    wake(w, bank, t, wantsContact = false, out)
+                }
             rested && stream.nextDouble() >= nightWeight -> wake(w, bank, t, wantsContact = nightWeight > 0.0, out)
             rested -> {
                 if (!stream.nextBernoulli(rates.selfSettleProbNight)) out += event(w, t, EventType.BRIEF_FUSS)
@@ -308,13 +317,34 @@ internal class TickRunner(
         }
     }
 
+    /** Starts the next sleep cycle; a cycle never runs past the nap target, so a catnap ends on time. */
     private fun startCycle(
         w: Work,
         bank: RngBank,
         t: SimInstant,
+        napUntil: SimInstant? = w.sleep?.napUntil,
     ): SleepCycle {
         val minutes = bank.stream(RngStreamId.SLEEP).sample(age.sleepCycleMinutes.value)
-        return SleepCycle(t, t + minutes).also { w.sleep = it }
+        val cycleEnd = t + minutes
+        val end = napUntil?.takeIf { it > t && it < cycleEnd } ?: cycleEnd
+        return SleepCycle(t, end, napUntil).also { w.sleep = it }
+    }
+
+    /** Daytime nap target (docs/01, reviewer decision): a full nap, or now and then a short catnap. */
+    private fun sampleNapUntil(
+        bank: RngBank,
+        t: SimInstant,
+    ): SimInstant? {
+        val napLength = age.dayNapMinutes.value
+        if (napLength == null || isNight(t)) return null
+        val stream = bank.stream(RngStreamId.SLEEP)
+        val minutes =
+            if (stream.nextBernoulli(age.catnapProb.value)) {
+                stream.sample(model.catnapMinutes.value)
+            } else {
+                stream.sample(napLength)
+            }
+        return t + minutes
     }
 
     internal fun wake(
@@ -383,7 +413,7 @@ internal class TickRunner(
         w.distress = 0.0
         w.activity = if (exhausted) Activity.EXHAUSTED_SLEEP else Activity.ASLEEP_ACTIVE
         w.timestamps = w.timestamps.copy(lastSleepStartAt = t)
-        startCycle(w, bank, t)
+        startCycle(w, bank, t, napUntil = sampleNapUntil(bank, t))
         out += event(w, t, EventType.FELL_ASLEEP).copy(activity = w.activity)
     }
 
@@ -504,103 +534,33 @@ internal class TickRunner(
         w.mood += (target - w.mood) * model.moodRatePerMinute.value * TICK_MINUTES
     }
 
-    // ---- care requests, unattended rule (docs/04 §4, docs/01 B1) -------------------------------------------
+    // ---- unattended rule (docs/01 B1); the request lifecycle lives in CareRequests ----------------------
 
-    private fun careRequests(
-        w: Work,
-        t: SimInstant,
-        bank: RngBank,
-        out: MutableList<BabyEvent>,
-    ) {
-        val request = w.careRequest
-        val atCryLevel = w.activity == Activity.CRYING || w.activity == Activity.CRYING_INTENSE
-        when {
-            request == null && atCryLevel -> {
-                val since = w.cryingLevelSince ?: t.also { w.cryingLevelSince = it }
-                if (t.millisSince(since) >= minutesToMillis(w.thresholds.careSustainMinutes)) openRequest(w, t, out)
-            }
-            request == null -> w.cryingLevelSince = null
-            w.isAsleep || w.distress <= model.calmThreshold.value -> {
-                out +=
-                    event(
-                        w,
-                        t,
-                        EventType.CARE_REQUEST_RESOLVED,
-                    ).copy(careRequestId = request.id, action = caringAction(w))
-                closeRequest(w, bank)
-            }
-            shouldEscalate(w, request, t) -> {
-                val escalated = request.copy(escalationLevel = request.escalationLevel + 1, lastAlertAt = t)
-                w.careRequest = escalated
-                out +=
-                    event(w, t, EventType.CARE_REQUEST_ESCALATED)
-                        .copy(careRequestId = escalated.id, escalationLevel = escalated.escalationLevel)
-            }
-        }
-    }
-
-    /** The action in progress, or else the most recent one: what calmed the baby, as far as the user knows. */
-    private fun caringAction(w: Work): CareActionType? = w.ongoingAction?.type ?: w.recentActions.lastOrNull()?.action
-
-    private fun shouldEscalate(
-        w: Work,
-        request: CareRequest,
-        t: SimInstant,
-    ): Boolean {
-        // No repeat alerts while someone is already caring for the baby (docs/04 §12).
-        if (request.escalationLevel >= model.maxEscalationLevel.value || w.ongoingAction != null) return false
-        val intenseFirstAlert = request.escalationLevel == 1 && w.activity == Activity.CRYING_INTENSE
-        return intenseFirstAlert || t.millisSince(request.lastAlertAt) >= rates.escalateAfterMillis
-    }
-
-    private fun openRequest(
-        w: Work,
-        t: SimInstant,
-        out: MutableList<BabyEvent>,
-    ) {
-        val request = CareRequest(id = w.nextCareRequestId, openedAt = t, escalationLevel = 1, lastAlertAt = t)
-        w.careRequest = request
-        w.nextCareRequestId += 1
-        w.unanswered = w.unanswered.copy(firstUnansweredAt = w.unanswered.firstUnansweredAt ?: t)
-        out += event(w, t, EventType.CARE_REQUEST_OPENED).copy(careRequestId = request.id, escalationLevel = 1)
-    }
-
-    private fun closeRequest(
-        w: Work,
-        bank: RngBank,
-    ) {
-        w.careRequest = null
-        w.cryingLevelSince = null
-        w.thresholds = w.thresholds.copy(careSustainMinutes = sampleCareSustain(bank))
-    }
-
-    /** Unattended crying stops after a cap: the request expires and the baby falls into exhausted sleep. */
+    /**
+     * Unattended crying stops after a cap and the baby falls into exhausted sleep. The cap counts from the later
+     * of crying onset and the last care action, and never applies during an ongoing action (reviewer: "longest
+     * unattended crying spell"). An unanswered alert stays open (it goes quiet on the next tick); one someone
+     * answered resolves (non-punitive, brief §8).
+     */
     private fun cryCap(
         w: Work,
         bank: RngBank,
         t: SimInstant,
         out: MutableList<BabyEvent>,
     ) {
-        val since = w.cryingSince ?: return
-        if (t.millisSince(since) < rates.crySegmentMaxMillis) return
-        w.careRequest?.let { request ->
-            val responded = w.recentActions.lastOrNull()?.let { it.at >= request.openedAt } == true
-            if (responded) {
-                // Someone was caring for the baby: not an unanswered request (non-punitive, brief §8).
-                out +=
-                    event(
-                        w,
-                        t,
-                        EventType.CARE_REQUEST_RESOLVED,
-                    ).copy(careRequestId = request.id, action = caringAction(w))
-            } else {
-                out += event(w, t, EventType.CARE_REQUEST_EXPIRED).copy(careRequestId = request.id)
-                w.unanswered = w.unanswered.copy(expiredCount = w.unanswered.expiredCount + 1)
-            }
-            closeRequest(w, bank)
+        val lastAction = w.recentActions.lastOrNull()?.at
+        val unattendedSince = w.cryingSince?.let { since -> lastAction?.let { maxOf(since, it) } ?: since }
+        if (unattendedSince == null || w.ongoingAction != null) return
+        if (t.millisSince(unattendedSince) < rates.crySegmentMaxMillis) return
+        w.careRequest?.takeIf { requests.responded(w, it) }?.let { request ->
+            out +=
+                event(
+                    w,
+                    t,
+                    EventType.CARE_REQUEST_RESOLVED,
+                ).copy(careRequestId = request.id, action = requests.caringAction(w))
+            requests.close(w, bank)
         }
-        w.ongoingAction?.takeIf { it.type == CareActionType.FEED }?.let { endFeed(w, bank, t) }
-        if (w.ongoingAction?.type == CareActionType.PLAY) w.ongoingAction = null
         fallAsleep(w, bank, t, exhausted = true, out)
     }
 

@@ -79,7 +79,7 @@ Format: **Proposed engine range** (what the sampler targets) · basis · grade. 
 
 ### Band NEWBORN — 0–4 weeks
 
-> **Reviewer decisions applied (2026-11-19).** The table below is the original research proposal. 17 of 20 values are now reviewed and several were changed for the doll-simulation use case (e.g. 6–8 feeds, 16–18 h sleep, ~4 naps, strong day/night rhythm). `engine/params/age/NEWBORN.json` is authoritative; each changed value keeps its previous value and source in its `source` text. Held for clarification: sleep cycle, fuss/cry minutes, longest crying spell (see `01`).
+> **Reviewer decisions applied (2026-11-19).** The table below is the original research proposal. All 20 values are decided and several were changed for the doll-simulation use case (e.g. 6–8 feeds, 16–18 h sleep, ~4 naps of 2–3 h, strong day/night rhythm, 5 min longest unattended crying spell). `engine/params/age/NEWBORN.json` is authoritative; each changed value keeps its previous value and source in its `source` text. See `01` for the owner's clarifications.
 
 | Parameter | Proposed range | Basis | Grade |
 |---|---|---|---|

@@ -103,7 +103,28 @@
         "https://www.bcchr.ca/healthysleepforkids/newborns"
       ],
       "evidence": "GUIDANCE",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_OK",
+      "note": "Reviewer asked for 2-3 h day naps; owner approved doing that with dayNapMinutes and keeping the 50-60 min cycle."
+    },
+    "dayNapMinutes": {
+      "value": {
+        "min": 120.0,
+        "typical": 150.0,
+        "max": 180.0
+      },
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet), confirmed by owner: \"2 to 3 hour naptimes throughout the day\". Hunger or a dirty diaper still wakes the baby earlier.",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED",
+      "note": "Daytime nap length: sleep cycles link until it is reached."
+    },
+    "catnapProb": {
+      "value": 0.1,
+      "source": "DESIGN_ASSUMPTION: Claude's reading of the reviewer note \"a few exceptions of a random 20 minute nap sporadically\"; reviewer to confirm",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Chance a daytime nap is a short catnap (model.catnapMinutes) instead."
     },
     "nightWakings": {
       "value": {
@@ -132,7 +153,7 @@
       ],
       "evidence": "DESIGN_ASSUMPTION",
       "reviewStatus": "UNREVIEWED",
-      "note": "Owner decision 2026-11-19: target the lower half of real-infant norms; revisit in M9 testing. Norm: 117-133 min mean (S11)."
+      "note": "Owner decision 2026-11-19: target the lower half of real-infant norms; revisit in M9 testing. Norm: 117-133 min mean (S11). Reviewer's \"3\" (2026-11-19) meant 3-minute fussy spells 16:00-24:00, applied as model.fussSpellMinutes and the evening window; this daily total is still unreviewed."
     },
     "eveningFussClustering": {
       "value": true,
@@ -231,11 +252,12 @@
       "reviewStatus": "REVIEWED_OK"
     },
     "crySegmentMaxMinutes": {
-      "value": 30.0,
-      "source": "DESIGN_ASSUMPTION: unattended crying cap before exhausted sleep (docs/01 B1)",
+      "value": 5.0,
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet), confirmed by owner. The alert stays open after the crying stops until a caregiver responds (owner decision, docs/01). Previously 30.0 (DESIGN_ASSUMPTION): unattended crying cap before exhausted sleep (docs/01 B1)",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED"
+      "reviewStatus": "REVIEWED_CHANGED",
+      "note": "Longest crying spell before the baby falls asleep exhausted."
     },
     "selfSettleProbNight": {
       "value": {

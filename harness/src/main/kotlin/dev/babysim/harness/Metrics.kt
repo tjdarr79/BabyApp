@@ -20,6 +20,7 @@ enum class Metric(
     AUDIBLE_EVENTS_PER_HOUR("Audible events per hour", ""),
     TOTAL_SLEEP_H("Total sleep per 24 h", "h"),
     NAPS_PER_DAY("Naps per day", ""),
+    DAY_NAP_MIN("Median daytime nap length", "min"),
     NIGHT_WAKINGS("Night wakings per night", ""),
     FUSS_CRY_MIN("Fussing and crying per 24 h", "min"),
     FEEDS_PER_DAY("Feeds per day", ""),
@@ -69,6 +70,7 @@ object Metrics {
                 segments.filter { it.activity in ASLEEP }.sumOf { it.to - it.from } / MILLIS_PER_HOUR / days,
             Metric.NAPS_PER_DAY to
                 events.count { it.type == EventType.FELL_ASLEEP && !isNight(it.at.epochMillis) } / days,
+            Metric.DAY_NAP_MIN to median(dayNapMinutes(events)),
             Metric.NIGHT_WAKINGS to events.count { it.type == EventType.WOKE && isNight(it.at.epochMillis) } / days,
             Metric.FUSS_CRY_MIN to
                 segments
@@ -120,6 +122,16 @@ object Metrics {
         val start = maxOf(segment.from, from)
         val end = minOf(segment.to, to)
         return if (end > start) segment.copy(from = start, to = end) else null
+    }
+
+    /** Length of each nap that starts in the daytime, from falling asleep to the next waking. */
+    private fun dayNapMinutes(events: List<BabyEvent>): List<Double> {
+        val starts = events.filter { it.type == EventType.FELL_ASLEEP && !isNight(it.at.epochMillis) }
+        return starts.mapNotNull { start ->
+            events
+                .firstOrNull { it.type == EventType.WOKE && it.at.epochMillis > start.at.epochMillis }
+                ?.let { (it.at.epochMillis - start.at.epochMillis) / MILLIS_PER_MINUTE.toDouble() }
+        }
     }
 
     private fun minuteOfDay(t: Long): Int = (t.mod(MILLIS_PER_DAY) / MILLIS_PER_MINUTE).toInt()

@@ -30,8 +30,9 @@ class UnattendedAutoPauseTest {
             val pause = assertNotNull(result.state.pause, label)
             when (pause.reason) {
                 PauseReason.AUTO_UNANSWERED_REQUESTS -> {
-                    val expired = result.events.count { it.type == EventType.CARE_REQUEST_EXPIRED }
-                    assertTrue(expired >= model.autoPauseUnansweredRequests.value, "$label: expired=$expired")
+                    // Unanswered episodes: the alert stays open while the baby goes quiet, then cries again.
+                    val episodes = result.state.unanswered.expiredCount
+                    assertTrue(episodes >= model.autoPauseUnansweredRequests.value, "$label: episodes=$episodes")
                 }
                 PauseReason.AUTO_NO_RESPONSE -> {
                     val firstRequest = result.events.first { it.type == EventType.CARE_REQUEST_OPENED }.at

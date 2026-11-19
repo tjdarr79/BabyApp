@@ -100,6 +100,11 @@ data class CareRequest(
     val openedAt: SimInstant,
     val escalationLevel: Int,
     val lastAlertAt: SimInstant,
+    /**
+     * Set when the baby went quiet (asleep or calm) before anyone responded. The alert stays open until a
+     * caregiver acts (owner decision 2026-11-19, docs/01); it re-alerts if the baby cries again.
+     */
+    val quietSince: SimInstant? = null,
 )
 
 @Serializable
@@ -142,11 +147,14 @@ enum class ProcessId {
 data class SleepCycle(
     val cycleStartedAt: SimInstant,
     val cycleEndsAt: SimInstant,
+    /** Daytime nap target: cycles link until this instant unless a need wakes the baby (docs/01). */
+    val napUntil: SimInstant? = null,
 )
 
 /** Tracks care requests that went unanswered since the caregiver last responded (docs/01 B1). */
 @Serializable
 data class Unanswered(
+    /** Care episodes that went quiet with no response; the field name predates alerts staying open. */
     val expiredCount: Int = 0,
     val firstUnansweredAt: SimInstant? = null,
 )

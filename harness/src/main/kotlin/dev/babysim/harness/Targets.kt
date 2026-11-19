@@ -57,6 +57,7 @@ object Targets {
             listOfNotNull(
                 profile(Metric.TOTAL_SLEEP_H, age.totalSleepHours24.value, "totalSleepHours24", SLEEP_LEVERS),
                 age.napsPerDay.value?.let { profile(Metric.NAPS_PER_DAY, it, "napsPerDay", SLEEP_LEVERS) },
+                age.dayNapMinutes.value?.let { profile(Metric.DAY_NAP_MIN, it, "dayNapMinutes", NAP_LEVERS) },
                 profile(Metric.NIGHT_WAKINGS, age.nightWakings.value, "nightWakings", NIGHT_LEVERS),
                 profile(Metric.FUSS_CRY_MIN, age.fussCryMinutesPer24h.value, "fussCryMinutesPer24h", CRY_LEVERS),
                 profile(Metric.FEEDS_PER_DAY, age.feedsPer24h.value, "feedsPer24h", FEED_LEVERS),
@@ -125,6 +126,7 @@ object Targets {
             "circadianStrength",
             "model.restedSleepPressure",
         )
+    private val NAP_LEVERS = listOf("dayNapMinutes", "catnapProb", "feedIntervalMinutes")
     private val NIGHT_LEVERS =
         listOf("feedIntervalMinutes", "selfSettleProbNight", "circadianStrength", "model.nightHungerRateScale")
     private val CRY_LEVERS =

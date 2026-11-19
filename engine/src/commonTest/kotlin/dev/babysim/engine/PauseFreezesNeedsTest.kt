@@ -2,6 +2,7 @@ package dev.babysim.engine
 
 import dev.babysim.engine.EngineFixtures.T0
 import dev.babysim.engine.state.PauseReason
+import dev.babysim.engine.state.Unanswered
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -64,13 +65,12 @@ class PauseFreezesNeedsTest {
             afterResume.take(expected.size).map { it.type to it.at.epochMillis - shift },
             "same behavior, at the same times shifted by the pause",
         )
-        if (autoPauseIndex != null) {
-            val neverPausedAt = neverPaused[autoPauseIndex].at.epochMillis + shift
-            assertTrue(
-                afterResume.none { it.type == EventType.AUTO_PAUSED && it.at.epochMillis == neverPausedAt },
-                "resume restarts the unanswered count",
-            )
-        }
+        val unansweredAtPause = paused.copy(unanswered = Unanswered(expiredCount = 2, firstUnansweredAt = T0))
+        assertEquals(
+            Unanswered(),
+            engine.resume(config, unansweredAtPause, pauseAt + pauseLength).state.unanswered,
+            "resume restarts the unanswered count",
+        )
     }
 
     @Test

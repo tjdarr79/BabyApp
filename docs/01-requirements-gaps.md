@@ -14,7 +14,10 @@ Priority: **P0** = blocks Milestone 2 (engine). **P1** = blocks Steps 3–5. **P
 | B1 unattended baby | **Approved as proposed:** auto-pause after 3 consecutive unanswered care requests or 4 h without response. No penalty |
 | Q-06-1 crying amount (`06`) | **Target the lower half of real-infant norms.** Revisit during real-device testing (M9) and raise if testers want more |
 | A4 audio budget | **Research sound libraries.** See `08-audio-sourcing.md` |
-| Newborn band review | **Childcare reviewer, 17 of 20 values applied** (7 kept, 10 changed toward a doll-friendly simulation). Held: `sleepCycleMinutes` (reviewer meant nap length 2–3 h, which the cycle length doesn't set), `fussCryMinutesPer24h` (reviewer wrote "3": 3-minute spells 16:00–24:00, or 3 minutes per day?), `crySegmentMaxMinutes` 5 (requests would expire after 5 min, so an away caregiver auto-pauses on day 1) |
+| Newborn band review | **Childcare reviewer: all 20 newborn values decided** (7 kept, 10 changed toward a doll-friendly simulation, 3 clarified by the owner below). `catnapProb` 0.1 and the newborn daily crying total (`fussCryMinutesPer24h` 50–100) are still for the reviewer to confirm |
+| Longest crying spell (owner, option b) | Newborn `crySegmentMaxMinutes` = 5. **Unattended crying stops at the cap but the alert stays open until a caregiver responds**; it sounds again if the baby cries again. The cap no longer applies while someone is caring for the baby (reviewer's label: "longest unattended crying spell"). Each quiet unanswered episode counts toward the 3-strike auto-pause; any action resets it. This also settles the M2.6 auto-pause edge case (`reports/M2.6-baseline.md`): alerts no longer close on their own, so the 4 h clock only runs while an alert is genuinely unanswered |
+| Fussy spells (owner: yes) | Reviewer's "3" = 3-minute fussy spells, 16:00–24:00. `model.fussSpellMinutes` 2–4 (typical 3), `model.eveningEndLocalMinutes` 1440. Applies to every band |
+| Newborn naps (owner: yes) | Reviewer's 2–3 h naps with an occasional 20 min catnap: keep the 50–60 min sleep cycle, add `dayNapMinutes` 120–180 (cycles link until reached) and `catnapProb` 0.1 with `model.catnapMinutes` 15–25. Other bands: no nap length (unchanged behavior) |
 
 ---
 

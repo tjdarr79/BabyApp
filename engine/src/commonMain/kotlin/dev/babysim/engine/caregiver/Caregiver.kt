@@ -167,18 +167,28 @@ object AttentiveCaregiver : CaregiverPolicy {
         rng: RandomSource,
     ): CareAction? =
         when {
-            view.asleep -> putDownIfAsleepInArms(view)
+            view.asleep -> whileAsleep(view)
             view.ongoingType == CareActionType.FEED -> duringFeed(view)
             view.careRequestOpenedAt != null || view.upset -> soothe(view)
             else -> calmCare(view)
         }
 
-    private fun putDownIfAsleepInArms(view: CaregiverView): CareAction? {
+    /**
+     * Puts down a baby asleep in arms. If an alert is still open (the baby cried itself to sleep), wakes it for a
+     * feed when one is due, otherwise checks on it without waking it, and changes a diaper that check found wet.
+     */
+    private fun whileAsleep(view: CaregiverView): CareAction? {
         val inArms = view.ongoingType == CareActionType.HOLD || view.ongoingType == CareActionType.ROCK
-        return if (inArms && view.minutesSince(view.lastSleepStartAt) >= ASLEEP_IN_ARMS_MINUTES) {
-            CareAction.Do(CareActionType.PUT_DOWN_TO_SLEEP)
-        } else {
-            null
+        val e = Episode(view)
+        val changeNeeded = e.diaperNeedsChange && e.untried(CareActionType.CHANGE_DIAPER)
+        return when {
+            inArms && view.minutesSince(view.lastSleepStartAt) >= ASLEEP_IN_ARMS_MINUTES ->
+                CareAction.Do(CareActionType.PUT_DOWN_TO_SLEEP)
+            view.ongoingType != null -> null
+            changeNeeded -> CareAction.Do(CareActionType.CHANGE_DIAPER)
+            view.careRequestOpenedAt == null -> null
+            e.feedDue -> CareAction.Start(CareActionType.FEED)
+            else -> CareAction.Do(CareActionType.CHECK_DIAPER)
         }
     }
 

@@ -43,6 +43,7 @@ data class ModelProfile(
     val wantsContactCauseWeight: Sourced<Double>,
     val causeStackBonus: Sourced<Double>,
     val drowsyToSleepMinutes: Sourced<DoubleRange>,
+    val catnapMinutes: Sourced<DoubleRange>,
     val restedSleepPressure: Sourced<Double>,
     val nightHungerRateScale: Sourced<Double>,
     val nightSleepPressureDecayScale: Sourced<Double>,

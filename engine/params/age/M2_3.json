@@ -100,6 +100,20 @@
       "evidence": "GUIDANCE",
       "reviewStatus": "UNREVIEWED"
     },
+    "dayNapMinutes": {
+      "value": null,
+      "source": "DESIGN_ASSUMPTION: no nap length set for this band; naps end when the baby is rested",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "catnapProb": {
+      "value": 0.0,
+      "source": "DESIGN_ASSUMPTION: catnaps apply only with a nap length (dayNapMinutes)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
     "nightWakings": {
       "value": {
         "min": 1.0,

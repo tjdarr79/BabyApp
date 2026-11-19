@@ -198,27 +198,27 @@
       "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED",
+      "reviewStatus": "REVIEWED_OK",
       "note": "Evening fussiness window start (minutes after midnight, 16:00)."
     },
     "eveningEndLocalMinutes": {
-      "value": 1380,
-      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "value": 1440,
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet), confirmed by owner: evening fussiness \"4:00 p.m. through 12:00 a.m.\". Previously 1380 (23:00).",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED",
-      "note": "Evening fussiness window end (23:00)."
+      "reviewStatus": "REVIEWED_CHANGED",
+      "note": "Evening fussiness window end (minutes after midnight, 24:00)."
     },
     "fussSpellMinutes": {
       "value": {
-        "min": 5.0,
-        "typical": 10.0,
-        "max": 20.0
+        "min": 2.0,
+        "typical": 3.0,
+        "max": 4.0
       },
-      "source": "DESIGN_ASSUMPTION: engine model constant (docs/04); tuned against harness reports in M2.6",
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet), confirmed by owner: \"three-minute fussiness intervals ... 4:00 pm until midnight\". Previously 5-20 (typical 10). Also sets how long a baby wants comfort after a night waking.",
       "sourceUrls": [],
       "evidence": "DESIGN_ASSUMPTION",
-      "reviewStatus": "UNREVIEWED",
+      "reviewStatus": "REVIEWED_CHANGED",
       "note": "Length of a fussy spell, or of wanting comfort after a night waking."
     },
     "boredCauseWeight": {
@@ -256,6 +256,18 @@
       "evidence": "DESIGN_ASSUMPTION",
       "reviewStatus": "UNREVIEWED",
       "note": "Minutes from drowsy to asleep when nothing disturbs the baby."
+    },
+    "catnapMinutes": {
+      "value": {
+        "min": 15.0,
+        "typical": 20.0,
+        "max": 25.0
+      },
+      "source": "DESIGN_ASSUMPTION: childcare reviewer decision 2026-11-19 (review sheet), confirmed by owner: \"a random 20 minute nap sporadically\"",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "REVIEWED_CHANGED",
+      "note": "Length of a catnap (bands with a day nap length only)."
     },
     "restedSleepPressure": {
       "value": 0.15,

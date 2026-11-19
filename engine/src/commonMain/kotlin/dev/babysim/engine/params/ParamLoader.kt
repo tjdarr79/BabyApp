@@ -34,7 +34,7 @@ object ParamLoader {
     private const val MODEL_FILE = "model.json"
 
     private val requiredLeafKeys = listOf("value", "source", "evidence", "reviewStatus")
-    private val probabilityFields = setOf("feedAcceptMin", "circadianStrength", "selfSettleProbNight")
+    private val probabilityFields = setOf("feedAcceptMin", "circadianStrength", "selfSettleProbNight", "catnapProb")
 
     private val json = Json { ignoreUnknownKeys = false }
 

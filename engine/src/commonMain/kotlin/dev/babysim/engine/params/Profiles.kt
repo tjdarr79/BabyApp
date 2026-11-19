@@ -21,6 +21,10 @@ data class AgeProfile(
     val napsPerDay: Sourced<DoubleRange?>,
     val wakeWindowMinutes: Sourced<DoubleRange>,
     val sleepCycleMinutes: Sourced<DoubleRange>,
+    /** Daytime nap length: sleep cycles link until it is reached. Null: naps end when the baby is rested. */
+    val dayNapMinutes: Sourced<DoubleRange?>,
+    /** Chance (0–1) that a daytime nap is a short catnap of `model.catnapMinutes` instead. */
+    val catnapProb: Sourced<Double>,
     val nightWakings: Sourced<DoubleRange>,
     /** Engine target, not the raw norm (owner decision: lower half of norms). */
     val fussCryMinutesPer24h: Sourced<DoubleRange>,
