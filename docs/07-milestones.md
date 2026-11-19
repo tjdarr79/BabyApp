@@ -6,7 +6,7 @@ Rules: each milestone is **one commit** (kickoff). It's done only when its provi
 |---|---|---|---|
 | M1 | 1 | Phase 1 documents | ⛔ owner approval before any code |
 | M2.1–M2.6 | 2 | Engine + harness + two-baby proof | ⛔ reviewer reads first harness report (M2.6) |
-| M3 | (1/5) | Platform spike: alarms, notifications, background audio | ⛔ **requires approval (deviation, `01` A3)** |
+| M3 | (1/5) | Platform spike: alarms, notifications, background audio | Approved 2026-11-19 (`01` A3) |
 | M4 | 3 | Persistence, SimulationHost on Android, profile & configuration | |
 | M5 | 4 | Core care interactions (functional UI) | |
 | M6.1–M6.3 | 5 | Scheduling, notifications, audio | ⛔ audio licence review |
@@ -56,7 +56,8 @@ Rules: each milestone is **one commit** (kickoff). It's done only when its provi
 - **Proof:** `TwoBabySeventyTwoHourTest`, `HarnessReportGoldenTest`, `CatchUpPerformanceTest` (< 250 ms per simulated day, JVM).
 - ⛔ Reviewer reads `docs/reports/M2.6-baseline.md`.
 
-## M3 — Platform spike (approval required)
+## M3 — Platform spike (approved)
+- Also: play 3–5 candidate clips from `08-audio-sourcing.md` through each audio tier, to judge quality after notification-channel compression and phone speakers.
 - Throwaway `spike/` app (not merged into `:app`) exercising `03` §7 tiers T1–T3 and §12 matrix on real devices.
 - **Acceptance:** `docs/spikes/M3-platform-findings.md` with measured alarm lateness per device/condition and go/no-go per audio tier for target 36 and 37.
 - **Proof:** findings document with raw logs. No production code.
@@ -82,6 +83,7 @@ Rules: each milestone is **one commit** (kickoff). It's done only when its provi
 - **Proof:** `NotificationMapperTest` (ids collision-free across slots), `QuietHoursTest`, `PostNotificationsDeniedDegradesTest`.
 
 ### M6.3 Audio library & playback
+- Prerequisite: libraries purchased and licence confirmations on file per `08-audio-sourcing.md`.
 - Asset manifest (`assets/audio/manifest.json`: filename, source URL, creator, licence, attribution, download date, age bands, vocal type, intensity, duration, states). Licence gate. Media3 playback, `AudioArbiter` integration, escalation/transition/stop-on-care, no immediate repeats. Tiers T0–T3 per M3 findings. Attribution screen.
 - **Proof:** `AudioManifestLicenseGateTest` (rejects NC/ND/missing fields), `ClipSelectionNoRepeatTest`, `EscalationStopsOnCareTest`, device checklist (locked screen, battery saver).
 - ⛔ Owner reviews audio licences.

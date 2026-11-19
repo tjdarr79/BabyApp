@@ -5,6 +5,16 @@
 
 Priority: **P0** = blocks Milestone 2 (engine). **P1** = blocks Steps 3–5. **P2** = blocks release (Steps 6–9).
 
+## Owner decisions (2026-11-19)
+
+| Item | Decision |
+|---|---|
+| A1 age-band gap | **No 5–8 week band.** Bands stay exactly as in the brief. The "2–3 months" band is parameterized for ~8–13 weeks. Weeks 5–8 are not separately simulated |
+| A3 platform spike | **Approved.** M3 runs after the engine milestone, before Step 3 |
+| B1 unattended baby | **Approved as proposed:** auto-pause after 3 consecutive unanswered care requests or 4 h without response. No penalty |
+| Q-06-1 crying amount (`06`) | **Target the lower half of real-infant norms.** Revisit during real-device testing (M9) and raise if testers want more |
+| A4 audio budget | **Research sound libraries.** See `08-audio-sourcing.md` |
+
 ---
 
 ## A. Conflicts to resolve

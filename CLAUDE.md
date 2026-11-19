@@ -2,11 +2,11 @@
 
 ## Source of truth
 - `docs/PROJECT_BRIEF.md` is the requirements baseline. `docs/00-kickoff.md` holds the engineering constraints.
-- Design docs: `docs/01-requirements-gaps.md` … `docs/07-milestones.md`. If code and docs disagree, **flag it and ask**. Don't silently resolve it.
+- Design docs: `docs/01-requirements-gaps.md` … `docs/08-audio-sourcing.md`. Owner decisions are logged at the top of `docs/01-requirements-gaps.md`. If code and docs disagree, **flag it and ask**. Don't silently resolve it.
 - Work proceeds milestone by milestone (`docs/07-milestones.md`). **One commit per milestone.** Don't start a milestone marked ⛔ without owner approval.
 
 ## Current phase
-Phase 1 (documents) is complete and **awaiting owner approval**. No application code exists yet. The next milestone is M2.1 (engine skeleton).
+Phase 1 (documents) is complete. Owner decisions are recorded (2026-11-19). No application code exists yet. **Explicit go-ahead is still required before M2.1 (engine skeleton).** M3 platform spike is approved.
 
 ## Architecture in one paragraph
 Pure-Kotlin behavior engine in `:engine` (Kotlin Multiplatform, `commonMain`, `jvm` target only for now) → `SimulationHost` owns N independent `BabyInstance`s → Android `:app` (Compose, Room, Media3, AlarmManager) persists snapshots, schedules OS alarms from the engine's `nextWakeAt`, posts notifications, and plays audio. There is no long-running service keeping the baby alive: every wake catches up from the last persisted timestamp. `:harness` is a JVM CLI that produces behavior reports.
@@ -54,7 +54,7 @@ Always run tests, lint and type checks with quiet flags and report real results 
 - Commit messages: `<area>: <imperative summary>`, one commit per milestone.
 
 ## MVP scope guardrails
-**In:** one baby exposed; infant bands Newborn, 2–3 m, 4–6 m, 7–9 m, 10–12 m; four temperaments; feed, burp, check/change diaper, hold, rock, play, put down; history; Normal/Accelerated/Training-hints modes; pause/resume; local notifications and audio; light/dark Material 3.
+**In:** one baby exposed; infant bands Newborn (0–4 wk), 2–3 m (~8–13 wk; no 5–8 wk band), 4–6 m, 7–9 m, 10–12 m; four temperaments; feed, burp, check/change diaper, hold, rock, play, put down; history; Normal/Accelerated/Training-hints modes; pause/resume; local notifications and audio; light/dark Material 3.
 
 **Out (don't build):** two-baby UI, multi-baby dashboard, Play Billing/IAP, per-baby audio cue sets (all Step 10); toddler behaviors, solids, pacifier, bathing, colic/reflux/illness overlays (Step 11); cloud backend, accounts, analytics or crash SDKs that transmit data, ads, AI APIs; 3D/cartoon visuals; game currencies or points.
 

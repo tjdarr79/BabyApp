@@ -91,13 +91,13 @@ Format: **Proposed engine range** (what the sampler targets) · basis · grade. 
 | Sleep cycle | 50–60 min | S17 | G |
 | Wake window | 30–90 min | S19 says none evidence-based; chosen to fit 14–17 h total | DA |
 | Night wakings | 2–4 (feed-driven) | Derived from 8–12 feeds and ≤ 4 h night gap (S3). Note S8 reports ~1.7 parent-reported for 0–2 m | G/DA |
-| Fuss/cry min / 24 h | 117–133 mean (SD ~68); engine target **60–130** | S11; lower end per enjoyability (Open Q-06-1) | PR/DA |
+| Fuss/cry min / 24 h | Norm 117–133 mean (SD ~68). Engine target **50–100** (lower half, owner decision; revisit M9) | S11 | PR/DA |
 | Evening fuss clustering | yes (weight ↑ 16:00–23:00) | S12 | PR |
 | Wet diapers / day | 6–10 | S13 (≥ 6) | G/DA |
 | Soiled diapers / day | 3–5 | S24 | S |
 | Vocal repertoire | cry, fuss, grunts, sleep noises, sighs. **No coos** | S15 (sounds other than crying by 2 m) | G |
 
-### Band M2_3 — "2–3 months" (proposed 5–13 weeks; see `01` A1)
+### Band M2_3 — "2–3 months" (~8–13 weeks; owner decision, `01` A1)
 
 | Parameter | Proposed range | Basis | Grade |
 |---|---|---|---|
@@ -112,7 +112,7 @@ Format: **Proposed engine range** (what the sampler targets) · basis · grade. 
 | Circadian strength | emerging (0.2 → 0.5 across band) | S17 (2–3 m emergence) | G/DA |
 | Longest night stretch | 4–6 h, increasing across band | S10 (largest consolidation 1–4 m) | PR(S) |
 | Night wakings | 1–3 | S8 (1.7 at 0–2 m, 0.8 at 3–6 m) | PR(S) |
-| Fuss/cry min / 24 h | ~68 (10–12 wk) to ~120 (5–6 wk); engine target **40–110**, declining across band | S11 | PR |
+| Fuss/cry min / 24 h | Norm: falls at 8–9 wk, ~68 at 10–12 wk. Engine target **35–80** (lower half, owner decision), declining across band | S11 | PR/DA |
 | Evening clustering | yes | S12 | PR |
 | Wet / soiled diapers | 6–8 / 1–3 | S13, S14 | G/S |
 | Vocal repertoire | + coos, social smile-linked sounds | S15 (2 m sounds; 4 m coos) | G |
@@ -193,6 +193,6 @@ Long sleeps are allowed (brief §7: "do not force unnecessary care events"). The
 
 ## Open questions for the reviewer
 
-- **Q-06-1:** Real newborn crying averages ~2 h/day (S11). Should the simulation reproduce the full norm, or target the lower half for enjoyability (brief §18 "without making it unrealistically demanding")? Current proposal: lower half.
+- **Q-06-1 (decided 2026-11-19):** target the lower half of real crying norms. Revisit in M9 real testing and raise if wanted.
 - **Q-06-2:** Every **DA** row above, especially wake windows, nap counts and bottle feed durations, needs reviewer values.
 - **Q-06-3:** Should Highly Sensitive / Demanding temperaments ever exceed the band's crying range, or must all temperaments stay within it?
