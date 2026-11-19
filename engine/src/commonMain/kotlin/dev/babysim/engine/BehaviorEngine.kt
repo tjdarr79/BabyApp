@@ -1,5 +1,6 @@
 package dev.babysim.engine
 
+import dev.babysim.engine.audio.audioDirectiveOf
 import dev.babysim.engine.model.Activity
 import dev.babysim.engine.model.BabyConfig
 import dev.babysim.engine.model.CareAction
@@ -105,7 +106,7 @@ class BehaviorEngine(
         if (caughtUp.state.pause != null) return caughtUp
         val paused = caughtUp.state.copy(pause = PauseInfo(PauseReason.USER, caughtUp.state.meta.lastAdvancedTo))
         val event = BabyEvent(config.id, paused.meta.lastAdvancedTo, EventType.PAUSED)
-        return StepResult(paused, caughtUp.events + event, nextEventAt = null, nextWakeAt = null)
+        return StepResult(paused, caughtUp.events + event, null, null, audioDirectiveOf(paused, config.seed))
     }
 
     /**
@@ -138,9 +139,10 @@ class BehaviorEngine(
         events: List<BabyEvent>,
         predict: Boolean,
     ): StepResult {
-        if (!predict || state.pause != null) return StepResult(state, events, nextEventAt = null, nextWakeAt = null)
+        val audio = audioDirectiveOf(state, config.seed)
+        if (!predict || state.pause != null) return StepResult(state, events, null, null, audio)
         val (nextEvent, nextWake) = lookAhead(config, state)
-        return StepResult(state, events, nextEvent, nextWake)
+        return StepResult(state, events, nextEvent, nextWake, audio)
     }
 
     /**
