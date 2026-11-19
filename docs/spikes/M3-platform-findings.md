@@ -49,15 +49,43 @@ The tier rules are coded in `spike/tools/analyze.py`. Lateness thresholds are ap
 
 **Send the logs.** In each app, tap **Save log to a file…**, choose Google Drive, and use a folder such as `Baby Sim/M3 logs`. Then tell Claude. The logs are committed under `docs/spikes/m3-logs/` and analysed with `python3 spike/tools/analyze.py docs/spikes/m3-logs/*.csv`.
 
+### 3a. Emulator smoke test first (owner's PC, Android Studio)
+
+The emulator checks that the app works: permission flows, alarms firing, the FGS refused or allowed under target 37, logging and export. It does **not** stand in for a phone. Its lateness numbers and OEM behavior don't count toward the verdicts; rows are labelled `emulator-…`.
+
+1. **Device Manager:** create a phone with an **API 37 (Android 17)** image. Add an **API 36** one later if you have time.
+2. **Install:** drag both APKs from the Drive folder onto the emulator window, or `adb install -r m3-spike-target37.apk` (same for 36).
+3. **In each app:** Allow notifications, grant exact alarms, label `emulator-normal`. Run **test A**, then **test C** for both usages. Use the emulator's power button to lock it after swiping the app away.
+4. **Force Doze** instead of waiting a night. Label `emulator-doze`, tap **Quick check** and **Alert in 2 min**, lock, then:
+   `adb shell dumpsys battery unplug`
+   `adb shell dumpsys deviceidle force-idle`
+   Wait 8 min, then undo with `adb shell dumpsys deviceidle unforce` and `adb shell dumpsys battery reset`.
+5. **Rare standby bucket:** label `emulator-bucket-rare`, then `adb shell am set-standby-bucket dev.babysim.spike.t37 rare` and repeat step 4's runs.
+6. **Exact denied:** `adb shell appops set dev.babysim.spike.t37 SCHEDULE_EXACT_ALARM deny`, then test C2. Undo with `allow`.
+7. **Reboot:** test E with `adb reboot`.
+8. **Android 17 rules on the API 36 image:** `adb shell cmd audio set-enable-hardening enable`, label `emulator-hardening-on`, then repeat test C.
+9. **Get the logs:** `adb exec-out run-as dev.babysim.spike.t37 cat files/spike-log.csv > emulator-t37.csv` (same for `t36`). Put the files in Drive `Baby Sim M3 spike/M3 logs`.
+
+### 3b. Samsung notes (Galaxy A54 5G)
+
+- Check the Android version first: Settings → About phone → Software information. The log records it too.
+- Run the full list in §3 with the **default** battery settings first (label `normal`). That is what most users will have.
+- **Test G on Samsung:** Settings → Battery → Background usage limits → add the app to **Sleeping apps** (label `samsung-sleeping`), then **Deep sleeping apps** (label `samsung-deep-sleeping`). Afterwards, set the app's battery to **Unrestricted** (app info → Battery) and repeat once (label `samsung-unrestricted`). That shows whether asking users to change it is worth it.
+- Turn off "Put unused apps to sleep" only for the `samsung-unrestricted` run.
+
 **Optional, with a computer and adb.** `adb shell cmd audio set-enable-hardening enable` makes an Android 16 phone enforce the Android 17 audio rules (`03` §7). Label such runs `hardening-on`.
 
 ## 4. Devices
 
 `03` §12 asks for a Pixel (Android 16 and 17), a Samsung, a Xiaomi/Redmi and a low-end Android 10–12 phone. Any phone that isn't tested is reported as **not tested**, and its tier verdict stays open.
 
-| Device | Android | Tests run | Logs |
-|---|---|---|---|
-| — | — | — | — |
+| Device | Android | Role | Tests run | Logs |
+|---|---|---|---|---|
+| Android Studio emulator (owner's PC) | API 37 (and 36) | Smoke test only (§3a) | — | — |
+| Samsung Galaxy A54 5G (reviewer's phone) | to record | Samsung / One UI row of the matrix | — | — |
+| Pixel (Android 16/17) | — | not available | — | — |
+| Xiaomi/Redmi (HyperOS) | — | not available | — | — |
+| Low-end Android 10–12 | — | not available | — | — |
 
 ## 5. Results
 
