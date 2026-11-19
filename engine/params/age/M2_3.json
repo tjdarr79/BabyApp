@@ -1,0 +1,245 @@
+{
+  "paramSetVersion": 1,
+  "ageBand": "M2_3",
+  "values": {
+    "feedIntervalMinutes": {
+      "value": {
+        "min": 180.0,
+        "typical": 210.0,
+        "max": 240.0
+      },
+      "source": "CDC: How Much and How Often to Feed Infant Formula; AAP/HealthyChildren: Amount and Schedule of Formula Feedings (docs/06)",
+      "sourceUrls": [
+        "https://www.cdc.gov/infant-toddler-nutrition/formula-feeding/how-much-and-how-often.html",
+        "https://healthychildren.org/English/ages-stages/baby/formula-feeding/Pages/Amount-and-Schedule-of-Formula-Feedings.aspx"
+      ],
+      "evidence": "GUIDANCE",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "feedDurationMinutes": {
+      "value": {
+        "min": 10.0,
+        "typical": 15.0,
+        "max": 20.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "feedsPer24h": {
+      "value": {
+        "min": 6.0,
+        "typical": 7.0,
+        "max": 8.0
+      },
+      "source": "CDC: How Much and How Often to Feed Infant Formula; AAP/HealthyChildren: Amount and Schedule of Formula Feedings (docs/06)",
+      "sourceUrls": [
+        "https://www.cdc.gov/infant-toddler-nutrition/formula-feeding/how-much-and-how-often.html",
+        "https://healthychildren.org/English/ages-stages/baby/formula-feeding/Pages/Amount-and-Schedule-of-Formula-Feedings.aspx"
+      ],
+      "evidence": "GUIDANCE",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Derived from 3-4 h intervals."
+    },
+    "feedAcceptMin": {
+      "value": 0.55,
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "totalSleepHours24": {
+      "value": {
+        "min": 14.0,
+        "typical": 15.5,
+        "max": 17.0
+      },
+      "source": "Hirshkowitz et al. 2015, National Sleep Foundation sleep duration recommendations (docs/06)",
+      "sourceUrls": [
+        "https://pubmed.ncbi.nlm.nih.gov/29073412/"
+      ],
+      "evidence": "PEER_REVIEWED",
+      "reviewStatus": "UNREVIEWED",
+      "note": "NSF 0-3 months range."
+    },
+    "napsPerDay": {
+      "value": {
+        "min": 3.0,
+        "typical": 4.0,
+        "max": 5.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "wakeWindowMinutes": {
+      "value": {
+        "min": 60.0,
+        "typical": 90.0,
+        "max": 120.0
+      },
+      "source": "DESIGN_ASSUMPTION: wake windows have no peer-reviewed basis. Context: Romper: Are wake windows evidence based? (no evidence found)",
+      "sourceUrls": [
+        "https://www.romper.com/parenting/wake-windows-infant-sleep-evidence-based"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "sleepCycleMinutes": {
+      "value": {
+        "min": 50.0,
+        "typical": 55.0,
+        "max": 60.0
+      },
+      "source": "BC Children's Hospital: Healthy Sleep for Kids, Newborns (docs/06)",
+      "sourceUrls": [
+        "https://www.bcchr.ca/healthysleepforkids/newborns"
+      ],
+      "evidence": "GUIDANCE",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "nightWakings": {
+      "value": {
+        "min": 1.0,
+        "typical": 2.0,
+        "max": 3.0
+      },
+      "source": "Galland et al. 2012, Normal sleep patterns in infants and children (systematic review); Henderson et al. 2010, Sleeping through the night (Pediatrics), via Contemporary Pediatrics (docs/06)",
+      "sourceUrls": [
+        "https://pubmed.ncbi.nlm.nih.gov/21784676/",
+        "https://www.contemporarypediatrics.com/view/more-half-infants-sleep-through-night-age-5-months"
+      ],
+      "evidence": "SECONDARY",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Galland: ~1.7 at 0-2 m, ~0.8 at 3-6 m (numbers via secondary summary)."
+    },
+    "fussCryMinutesPer24h": {
+      "value": {
+        "min": 35.0,
+        "typical": 55.0,
+        "max": 80.0
+      },
+      "source": "DESIGN_ASSUMPTION: engine target below the published norm. Context: Wolke, Bilgin, Samara 2017, Fussing and crying durations meta-analysis (J Pediatr)",
+      "sourceUrls": [
+        "https://wrap.warwick.ac.uk/87542/"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Owner decision 2026-11-19: target the lower half of real-infant norms; revisit in M9 testing. Norm: falls at 8-9 wk, ~68 min at 10-12 wk (S11)."
+    },
+    "eveningFussClustering": {
+      "value": true,
+      "source": "Barr et al., normal crying curve and evening clustering (docs/06)",
+      "sourceUrls": [
+        "https://www.melvinkonner.com/images/PDFs/articles/Barr%20Crying%20Cult%20Specificity.pdf"
+      ],
+      "evidence": "PEER_REVIEWED",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "circadianStrength": {
+      "value": {
+        "min": 0.2,
+        "typical": 0.35,
+        "max": 0.5
+      },
+      "source": "DESIGN_ASSUMPTION: circadian rhythm emerges ~2-3 months (S17); strength values chosen. Context: BC Children's Hospital: Healthy Sleep for Kids, Newborns",
+      "sourceUrls": [
+        "https://www.bcchr.ca/healthysleepforkids/newborns"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "wetDiapersPerDay": {
+      "value": {
+        "min": 6.0,
+        "typical": 7.0,
+        "max": 8.0
+      },
+      "source": "AAP/HealthyChildren: How to Tell if Your Breastfed Baby is Getting Enough Milk (docs/06)",
+      "sourceUrls": [
+        "https://www.healthychildren.org/English/ages-stages/baby/breastfeeding/Pages/How-to-Tell-if-Baby-is-Getting-Enough-Milk.aspx"
+      ],
+      "evidence": "GUIDANCE",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "soiledDiapersPerDay": {
+      "value": {
+        "min": 1.0,
+        "typical": 2.0,
+        "max": 3.0
+      },
+      "source": "Pathways.org: Baby's first diaper changes (docs/06)",
+      "sourceUrls": [
+        "https://pathways.org/babys-first-diaper-changes-how-often-to-change-a-newborns-diaper-and-what-to-expect"
+      ],
+      "evidence": "SECONDARY",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "vocalRepertoire": {
+      "value": [
+        "CRY",
+        "FUSS",
+        "GRUNT",
+        "SIGH",
+        "SLEEP_NOISE",
+        "HICCUP",
+        "COO"
+      ],
+      "source": "CDC: Milestone Checklists by Age (docs/06)",
+      "sourceUrls": [
+        "https://www.cdc.gov/act-early/resources/milestones-checklist-by-age.html"
+      ],
+      "evidence": "GUIDANCE",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "vocalRatePerAwakeHour": {
+      "value": {
+        "min": 4.0,
+        "typical": 7.0,
+        "max": 10.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "boredAfterMinutes": {
+      "value": null,
+      "source": "DESIGN_ASSUMPTION: boredom not modeled below ~4 months",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "careSustainMinutes": {
+      "value": {
+        "min": 2.0,
+        "typical": 3.0,
+        "max": 5.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "crySegmentMaxMinutes": {
+      "value": 30.0,
+      "source": "DESIGN_ASSUMPTION: unattended crying cap before exhausted sleep (docs/01 B1)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "selfSettleProbNight": {
+      "value": {
+        "min": 0.2,
+        "typical": 0.3,
+        "max": 0.4
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    }
+  }
+}

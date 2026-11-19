@@ -3,3 +3,5 @@ style:
   MagicNumber:
     # Behavior numbers belong in parameter JSON (CLAUDE.md); tests may use literals.
     excludes: ['**/commonTest/**', '**/jvmTest/**', '**/test/**']
+    # Enum constructor arguments are stable identifiers (e.g. RNG stream codes), not tunable values.
+    ignoreEnums: true

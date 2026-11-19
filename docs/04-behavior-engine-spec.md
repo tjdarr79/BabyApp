@@ -137,7 +137,7 @@ All events: `{babyId, at: SimInstant, type, payload}`.
 ### 6.1 Schema
 
 ```jsonc
-// engine/src/commonMain/resources/params/age/2-3m.json  (illustrative)
+// engine/params/age/M2_3.json  (illustrative; files are embedded into the engine at build time)
 {
   "paramSetVersion": 1,
   "ageBand": "M2_3",

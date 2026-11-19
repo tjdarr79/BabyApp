@@ -1,0 +1,253 @@
+{
+  "paramSetVersion": 1,
+  "ageBand": "M10_12",
+  "values": {
+    "feedIntervalMinutes": {
+      "value": {
+        "min": 240.0,
+        "typical": 270.0,
+        "max": 300.0
+      },
+      "source": "DESIGN_ASSUMPTION: derived from feeds per day. Context: CDC: How Much and How Often to Feed Infant Formula",
+      "sourceUrls": [
+        "https://www.cdc.gov/infant-toddler-nutrition/formula-feeding/how-much-and-how-often.html"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "feedDurationMinutes": {
+      "value": {
+        "min": 8.0,
+        "typical": 12.0,
+        "max": 18.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "feedsPer24h": {
+      "value": {
+        "min": 3.0,
+        "typical": 4.0,
+        "max": 5.0
+      },
+      "source": "DESIGN_ASSUMPTION: CDC 5-6 feeds incl. solids, reduced for milk-only. Context: CDC: How Much and How Often to Feed Infant Formula; CDC: When, What, and How to Introduce Solid Foods",
+      "sourceUrls": [
+        "https://www.cdc.gov/infant-toddler-nutrition/formula-feeding/how-much-and-how-often.html",
+        "https://www.cdc.gov/infant-toddler-nutrition/foods-and-drinks/when-what-and-how-to-introduce-solid-foods.html"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Read via search excerpt; verify on the primary page before reviewer sign-off. Milk feeds only; solids increasing."
+    },
+    "feedAcceptMin": {
+      "value": 0.6,
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "totalSleepHours24": {
+      "value": {
+        "min": 12.0,
+        "typical": 14.0,
+        "max": 16.0
+      },
+      "source": "Paruthi et al. 2016, AASM pediatric sleep duration consensus (docs/06)",
+      "sourceUrls": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5078711/"
+      ],
+      "evidence": "PEER_REVIEWED",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "napsPerDay": {
+      "value": {
+        "min": 2.0,
+        "typical": 2.0,
+        "max": 2.0
+      },
+      "source": "ParentData (Oster): nap transition data (docs/06)",
+      "sourceUrls": [
+        "https://parentdata.org/?p=17757"
+      ],
+      "evidence": "SECONDARY",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Parent-reported dataset, not peer-reviewed."
+    },
+    "wakeWindowMinutes": {
+      "value": {
+        "min": 180.0,
+        "typical": 210.0,
+        "max": 240.0
+      },
+      "source": "DESIGN_ASSUMPTION: wake windows have no peer-reviewed basis. Context: Romper: Are wake windows evidence based? (no evidence found)",
+      "sourceUrls": [
+        "https://www.romper.com/parenting/wake-windows-infant-sleep-evidence-based"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "sleepCycleMinutes": {
+      "value": {
+        "min": 50.0,
+        "typical": 60.0,
+        "max": 70.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "nightWakings": {
+      "value": {
+        "min": 0.0,
+        "typical": 0.5,
+        "max": 1.0
+      },
+      "source": "Pennestri et al. 2018, Uninterrupted infant sleep (Pediatrics), via HealthDay; Henderson et al. 2010, Sleeping through the night (Pediatrics), via Contemporary Pediatrics (docs/06)",
+      "sourceUrls": [
+        "https://consumer.healthday.com/pediatrics-15/infant-and-child-care-health-news-410/many-6-month-12-month-olds-do-not-sleep-through-the-night-739481.html",
+        "https://www.contemporarypediatrics.com/view/more-half-infants-sleep-through-night-age-5-months"
+      ],
+      "evidence": "SECONDARY",
+      "reviewStatus": "UNREVIEWED",
+      "note": "At 12 m ~72% >= 6 h and ~57% >= 8 h uninterrupted (S9)."
+    },
+    "fussCryMinutesPer24h": {
+      "value": {
+        "min": 20.0,
+        "typical": 35.0,
+        "max": 60.0
+      },
+      "source": "DESIGN_ASSUMPTION: no crying-duration data beyond 12 weeks. Context: Wolke, Bilgin, Samara 2017, Fussing and crying durations meta-analysis (J Pediatr)",
+      "sourceUrls": [
+        "https://wrap.warwick.ac.uk/87542/"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Owner decision 2026-11-19: target the lower half of real-infant norms; revisit in M9 testing."
+    },
+    "eveningFussClustering": {
+      "value": false,
+      "source": "DESIGN_ASSUMPTION: evening clustering is documented for early months only. Context: Barr et al., normal crying curve and evening clustering",
+      "sourceUrls": [
+        "https://www.melvinkonner.com/images/PDFs/articles/Barr%20Crying%20Cult%20Specificity.pdf"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "circadianStrength": {
+      "value": {
+        "min": 0.85,
+        "typical": 0.9,
+        "max": 0.95
+      },
+      "source": "DESIGN_ASSUMPTION: strength values chosen. Context: BC Children's Hospital: Healthy Sleep for Kids, Newborns",
+      "sourceUrls": [
+        "https://www.bcchr.ca/healthysleepforkids/newborns"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "wetDiapersPerDay": {
+      "value": {
+        "min": 5.0,
+        "typical": 6.0,
+        "max": 7.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "soiledDiapersPerDay": {
+      "value": {
+        "min": 1.0,
+        "typical": 1.5,
+        "max": 2.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06). Context: Pathways.org: Baby's first diaper changes",
+      "sourceUrls": [
+        "https://pathways.org/babys-first-diaper-changes-how-often-to-change-a-newborns-diaper-and-what-to-expect"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "vocalRepertoire": {
+      "value": [
+        "CRY",
+        "FUSS",
+        "GRUNT",
+        "SIGH",
+        "SLEEP_NOISE",
+        "HICCUP",
+        "COO",
+        "SQUEAL",
+        "GIGGLE",
+        "BABBLE",
+        "BABBLE_REDUPLICATED"
+      ],
+      "source": "CDC: Milestone Checklists by Age (docs/06)",
+      "sourceUrls": [
+        "https://www.cdc.gov/act-early/resources/milestones-checklist-by-age.html"
+      ],
+      "evidence": "GUIDANCE",
+      "reviewStatus": "UNREVIEWED",
+      "note": "Words and gestures are post-MVP audio."
+    },
+    "vocalRatePerAwakeHour": {
+      "value": {
+        "min": 8.0,
+        "typical": 12.0,
+        "max": 16.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "boredAfterMinutes": {
+      "value": {
+        "min": 15.0,
+        "typical": 20.0,
+        "max": 35.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "careSustainMinutes": {
+      "value": {
+        "min": 3.0,
+        "typical": 5.0,
+        "max": 7.0
+      },
+      "source": "DESIGN_ASSUMPTION: no adequate source found; reviewer to decide (docs/06)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "crySegmentMaxMinutes": {
+      "value": 30.0,
+      "source": "DESIGN_ASSUMPTION: unattended crying cap before exhausted sleep (docs/01 B1)",
+      "sourceUrls": [],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    },
+    "selfSettleProbNight": {
+      "value": {
+        "min": 0.6,
+        "typical": 0.7,
+        "max": 0.8
+      },
+      "source": "DESIGN_ASSUMPTION: probabilities chosen. Context: AAP/HealthyChildren: Getting Your Baby to Sleep",
+      "sourceUrls": [
+        "https://www.healthychildren.org/English/ages-stages/baby/sleep/pages/Getting-Your-Baby-to-Sleep.aspx"
+      ],
+      "evidence": "DESIGN_ASSUMPTION",
+      "reviewStatus": "UNREVIEWED"
+    }
+  }
+}
