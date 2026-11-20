@@ -34,6 +34,9 @@ The people using these screens are not developers. The owner's rule: **"clear an
 - Every icon-only button has a `contentDescription`. Decorative icons use `null`.
 - Touch targets are ≥ 48 dp. Text wraps rather than truncates (no `maxLines = 1` on labels that can grow).
 - Re-read state on resume, so a permission granted in Settings shows as a tick when the user comes back.
+  - **Compose strong skipping (Kotlin 2.x default) skips a child whose arguments are the same instances.** A composable that reads state from *outside* Compose (permissions, SharedPreferences, the log) must take a parameter that changes on every refresh. The spike passes `refresh` (a fresh `System.nanoTime()` per `TestApp` recomposition).
+  - Without it, a permission allowed in Settings only showed after the app restarted. Testers had to toggle every setting twice (m3-3, fixed in m3-4).
+  - Keep `PermissionRefreshTest` green: it fails if this regresses.
 
 ## Verify before shipping (required)
 1. Add or adjust a Roborazzi test in `spike/app/src/test/.../ScreenshotTest.kt` for each changed screen, seeding Prefs to the state shown. Include one dark-mode shot.

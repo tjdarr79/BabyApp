@@ -116,9 +116,12 @@ fun TestApp(
         }
     }
     val refresh = { version++ }
-    // Re-read everything whenever the clock ticks, the app resumes, or an action happened.
+    // Compose skips children whose arguments look unchanged, but permissions and saved progress live outside
+    // Compose. A new value on every recomposition (clock tick, resume, action) makes those children re-read them.
+    // Without it a permission allowed in Settings only showed after the app restarted (tester report, m3-3).
     @Suppress("UNUSED_EXPRESSION")
     run { now; version; resumeTick }
+    val redraw = System.nanoTime()
 
     val plan = Steps.plan(context)
     val step = selected?.let { id -> plan.firstOrNull { it.id == id } } ?: Steps.current(context)
@@ -148,12 +151,13 @@ fun TestApp(
                 step = step,
                 state = Steps.state(context, step.id),
                 now = now,
+                refresh = redraw,
                 onChanged = {
                     selected = null
                     refresh()
                 },
             )
-            Footer(context)
+            Footer(context, redraw)
         }
     }
 
@@ -275,6 +279,7 @@ private fun StepCard(
     step: Step,
     state: StepState,
     now: Long,
+    refresh: Long,
     onChanged: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -301,9 +306,9 @@ private fun StepCard(
             Text(step.intro, style = MaterialTheme.typography.bodyLarge)
 
             when (state) {
-                StepState.NotStarted -> NotStarted(step, confirmed, { confirmed = it }, onChanged)
-                is StepState.Running -> Running(step, state, now, onChanged)
-                StepState.Done, StepState.Skipped -> Finished(step, state, onChanged)
+                StepState.NotStarted -> NotStarted(step, confirmed, { confirmed = it }, refresh, onChanged)
+                is StepState.Running -> Running(step, state, now, refresh, onChanged)
+                StepState.Done, StepState.Skipped -> Finished(step, state, refresh, onChanged)
             }
 
             if (step.id == Steps.WELCOME || step.id == Steps.RESULTS) return@Column
@@ -361,13 +366,14 @@ private fun NotStarted(
     step: Step,
     confirmed: Boolean,
     onConfirm: (Boolean) -> Unit,
+    refresh: Long,
     onChanged: () -> Unit,
 ) {
     val context = LocalContext.current
     Instructions(step.howTo)
-    val unmet = Needs(step, confirmed, onConfirm, onChanged)
+    val unmet = Needs(step, confirmed, onConfirm, refresh, onChanged)
     when (step.id) {
-        Steps.CLIPS -> ClipTools(onChanged)
+        Steps.CLIPS -> ClipTools(refresh, onChanged)
         Steps.RESULTS -> {
             SaveResults(onSaved = {
                 Steps.finish(context, step)
@@ -407,10 +413,12 @@ private fun SkipButton(
 
 /** Shows each requirement with a tick or a fix-it button. Returns the unmet ones. */
 @Composable
+@Suppress("UNUSED_PARAMETER") // refresh: forces a re-read of the permissions (see TestApp)
 private fun Needs(
     step: Step,
     confirmed: Boolean,
     onConfirm: (Boolean) -> Unit,
+    refresh: Long,
     onChanged: () -> Unit,
 ): List<Need> {
     if (step.needs.isEmpty()) return emptyList()
@@ -510,10 +518,12 @@ private fun openExact(context: Context) {
 }
 
 @Composable
+@Suppress("UNUSED_PARAMETER") // refresh: answers given on a notification show at once
 private fun Running(
     step: Step,
     state: StepState.Running,
     now: Long,
+    refresh: Long,
     onChanged: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -610,9 +620,11 @@ private fun QuestionCard(
 }
 
 @Composable
+@Suppress("UNUSED_PARAMETER")
 private fun Finished(
     step: Step,
     state: StepState,
+    refresh: Long,
     onChanged: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -657,7 +669,11 @@ private fun SaveResults(onSaved: () -> Unit) {
 }
 
 @Composable
-private fun ClipTools(onChanged: () -> Unit) {
+@Suppress("UNUSED_PARAMETER") // refresh: the selected clip shows at once
+private fun ClipTools(
+    refresh: Long,
+    onChanged: () -> Unit,
+) {
     val context = LocalContext.current
     var player by remember { mutableStateOf<MediaPlayer?>(null) }
     DisposableEffect(Unit) { onDispose { player?.release() } }
@@ -712,7 +728,11 @@ private fun ClipTools(onChanged: () -> Unit) {
 }
 
 @Composable
-private fun Footer(context: Context) {
+@Suppress("UNUSED_PARAMETER")
+private fun Footer(
+    context: Context,
+    refresh: Long,
+) {
     val state = DeviceState.snapshot(context)
     val parts =
         listOfNotNull(
