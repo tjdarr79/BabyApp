@@ -97,7 +97,7 @@ The emulator checks that the app works: permission flows, alarms firing, the FGS
 
 | Device | Android | Role | Tests run | Logs |
 |---|---|---|---|---|
-| Android Studio emulator (owner's PC) | API 37 | Smoke test only (§3a) | **Dropped 2026-11-20**: the PC lacks the RAM to run it. The app was installed, but nothing was heard and no log was pulled, so no result | — |
+| Android Studio emulator (owner's PC) | API 37 | Smoke test only (§3a) | **2026-11-20, build m3-2 (owner report):** welcome, setup, sound check and "alert while locked" (2 min, app swiped away) all worked, and the cry was heard. The v1 attempt was silent; cause unknown (emulator audio or v1). Log not yet collected | pending |
 | Samsung Galaxy A54 5G (reviewer's phone) | to record | Samsung / One UI row of the matrix, and now also the first run of the app | — | — |
 | Pixel (Android 16/17) | — | not available | — | — |
 | Xiaomi/Redmi (HyperOS) | — | not available | — | — |
