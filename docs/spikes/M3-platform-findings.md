@@ -81,8 +81,8 @@ The emulator checks that the app works: permission flows, alarms firing, the FGS
 
 | Device | Android | Role | Tests run | Logs |
 |---|---|---|---|---|
-| Android Studio emulator (owner's PC) | API 37 (and 36) | Smoke test only (§3a) | — | — |
-| Samsung Galaxy A54 5G (reviewer's phone) | to record | Samsung / One UI row of the matrix | — | — |
+| Android Studio emulator (owner's PC) | API 37 | Smoke test only (§3a) | **Dropped 2026-11-20**: the PC lacks the RAM to run it. The app was installed, but nothing was heard and no log was pulled, so no result | — |
+| Samsung Galaxy A54 5G (reviewer's phone) | to record | Samsung / One UI row of the matrix, and now also the first run of the app | — | — |
 | Pixel (Android 16/17) | — | not available | — | — |
 | Xiaomi/Redmi (HyperOS) | — | not available | — | — |
 | Low-end Android 10–12 | — | not available | — | — |
