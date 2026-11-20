@@ -15,6 +15,8 @@ object Prefs {
     private const val PENDING = "pending_alarms"
     private const val QUESTIONS = "questions"
     private const val MONITOR = "monitor_running"
+    private const val LAST_BOOT = "last_boot"
+    private const val STEP = "step_"
 
     private fun p(context: Context): SharedPreferences = context.getSharedPreferences(NAME, Context.MODE_PRIVATE)
 
@@ -47,6 +49,25 @@ object Prefs {
         context: Context,
         value: Boolean,
     ) = p(context).edit().putBoolean(MONITOR, value).apply()
+
+    fun lastBoot(context: Context): Long = p(context).getLong(LAST_BOOT, 0)
+
+    fun setLastBoot(
+        context: Context,
+        value: Long,
+    ) = p(context).edit().putLong(LAST_BOOT, value).apply()
+
+    /** Raw step state: "" (not started), "running:<startMs>:<dueMs>", "done" or "skipped". */
+    fun step(
+        context: Context,
+        id: String,
+    ): String = p(context).getString(STEP + id, "").orEmpty()
+
+    fun setStep(
+        context: Context,
+        id: String,
+        value: String,
+    ) = p(context).edit().putString(STEP + id, value).apply()
 
     fun pending(context: Context): Set<String> = p(context).getStringSet(PENDING, emptySet()).orEmpty()
 
@@ -151,7 +172,7 @@ object Alarms {
         spacingMs: Long,
         seriesList: List<String> = listOf(Planned.EXACT, Planned.INEXACT),
     ): String {
-        val runId = "$label-" + SpikeLog.iso(System.currentTimeMillis()).substring(5, 16).replace(":", "")
+        val runId = "$label~" + SpikeLog.iso(System.currentTimeMillis()).substring(5, 16).replace(":", "")
         val start = System.currentTimeMillis() + firstInMs
         for (series in seriesList) {
             for (i in 0 until count) {

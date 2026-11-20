@@ -46,10 +46,15 @@ class PlaybackService : Service() {
             ACTION_CRY -> {
                 val label = intent.getStringExtra(EXTRA_LABEL).orEmpty()
                 val usage = intent.getStringExtra(EXTRA_USAGE) ?: "media"
-                if (goForeground("Baby is crying (T2, usage=$usage)", usage)) playCry(label, usage) else stopIfIdle()
+                val question = "$label-$usage-t2"
+                if (goForeground("The test baby is crying", usage, question)) playCry(label, usage, question) else stopIfIdle()
             }
             ACTION_MONITOR -> if (goForeground("Baby monitor running (T3)")) startMonitor() else stopIfIdle()
             ACTION_STOP -> stopEverything("user")
+            ACTION_STOP_CRY -> {
+                stopCry("user_heard")
+                stopIfIdle()
+            }
             else -> stopIfIdle()
         }
         return START_NOT_STICKY
@@ -58,6 +63,7 @@ class PlaybackService : Service() {
     private fun goForeground(
         text: String,
         usage: String = "monitor",
+        question: String? = null,
     ): Boolean {
         val stop =
             PendingIntent.getService(
@@ -73,6 +79,12 @@ class PlaybackService : Service() {
                 .setContentTitle(text)
                 .setOngoing(true)
                 .addAction(Notification.Action.Builder(null, "Stop", stop).build())
+        question?.let {
+            builder.setContentText("Can you hear it? Tap the button if you can.")
+            builder.addAction(
+                Notification.Action.Builder(null, "I can hear it", Answers.intent(this, it, Answers.CLEAR, stopCry = true)).build(),
+            )
+        }
         session?.let { builder.setStyle(Notification.MediaStyle().setMediaSession(it.sessionToken)) }
         return try {
             Notifications.ensureChannels(this)
@@ -94,6 +106,7 @@ class PlaybackService : Service() {
     private fun playCry(
         label: String,
         usage: String,
+        question: String,
     ) {
         stopCry("replaced")
         val attrs = attributes(usage)
@@ -132,9 +145,11 @@ class PlaybackService : Service() {
                 detail = "playing=${cry?.isPlaying};active_playbacks=${audio.activePlaybackConfigurations.size}",
             )
         }, CHECK_AFTER_MS)
-        Questions.ask(this, "$label-$usage-t2", "T2 playback (usage=$usage${if (session != null) ", in monitor" else ""}), $label")
-        handler.postDelayed({ stopCry("timeout")
-            stopIfIdle() }, CRY_MS)
+        Questions.ask(this, question, Questions.stepOf(label), "Did the crying keep going for about a minute?")
+        handler.postDelayed({
+            stopCry("timeout")
+            stopIfIdle()
+        }, CRY_MS)
     }
 
     private fun stopCry(reason: String) {
@@ -266,6 +281,7 @@ class PlaybackService : Service() {
         private const val ACTION_CRY = "dev.babysim.spike.CRY"
         private const val ACTION_MONITOR = "dev.babysim.spike.MONITOR"
         private const val ACTION_STOP = "dev.babysim.spike.STOP"
+        private const val ACTION_STOP_CRY = "dev.babysim.spike.STOP_CRY"
         private const val EXTRA_LABEL = "label"
         private const val EXTRA_USAGE = "usage"
         private const val FGS_ID = 1001
@@ -312,6 +328,11 @@ class PlaybackService : Service() {
         /** From the foreground only (T3 must be user-started, docs/03 §7). */
         fun startMonitor(context: Context) =
             context.startForegroundService(Intent(context, PlaybackService::class.java).setAction(ACTION_MONITOR))
+
+        /** From a notification action: the tester heard the cry, so stop it (a running monitor keeps going). */
+        fun stopCry(context: Context) {
+            context.startService(Intent(context, PlaybackService::class.java).setAction(ACTION_STOP_CRY))
+        }
 
         fun stop(context: Context) {
             context.startService(Intent(context, PlaybackService::class.java).setAction(ACTION_STOP))

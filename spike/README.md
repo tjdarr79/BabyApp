@@ -6,16 +6,18 @@ A standalone Android app that measures alarm lateness and background audio tiers
 
 ```bash
 cd spike
-./gradlew assembleT36Debug assembleT37Debug lintT36Debug lintT37Debug -q
+./gradlew assembleT36Debug assembleT37Debug lintT36Debug lintT37Debug testT37DebugUnitTest -q
 ```
 
-- Needs an Android SDK with `platforms;android-37.0` and build-tools 36. Point to it with `spike/local.properties` (`sdk.dir=…`, not committed) or `ANDROID_HOME`.
+- Needs an Android SDK with `platforms;android-37.2` (Compose needs 37.1+) and build-tools 36. See `.claude/skills/android-build`. Point to it with `spike/local.properties` (`sdk.dir=…`, not committed) or `ANDROID_HOME`.
 - Outputs:
   - `app/build/outputs/apk/t36/debug/app-t36-debug.apk`: targetSdk 36, id `dev.babysim.spike.t36`.
   - `app/build/outputs/apk/t37/debug/app-t37-debug.apk`: targetSdk 37, id `dev.babysim.spike.t37`.
 - Debug-signed, for sideloading only.
 
 ## What it does
+
+The tester sees a **guided, step-by-step screen** (Compose + Material 3, `ui/TestApp.kt`; the steps are in `Steps.kt`). It's written for non-technical testers: one task per screen, plain language, permissions handled inline, and "did you hear it?" answered from the notification or the app. The target-36 build ("Baby Sim extra test") runs a 10-minute subset. Screenshot tests (`ScreenshotTest.kt`, Robolectric + Roborazzi) render every key screen at Galaxy A54 size without an emulator. Underneath:
 
 - **Permissions** are exactly the production set: notifications, `SCHEDULE_EXACT_ALARM`, boot, and a `mediaPlayback` FGS. Never `USE_EXACT_ALARM`, full-screen intents or battery-exemption prompts.
 - **Lateness runs** schedule an exact series (`setExactAndAllowWhileIdle`, or the inexact fallback when exact alarms are denied) and an inexact series. Every fire is logged with its lateness and the device state.

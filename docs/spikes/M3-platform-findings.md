@@ -29,6 +29,22 @@ The tier rules are coded in `spike/tools/analyze.py`. Lateness thresholds are ap
 
 ## 3. How to run it (per phone)
 
+> **Since build m3-2 (2026-11-20) the app guides the tester through all of this itself.** It's a Compose + Material 3 screen, one step at a time in plain language. Permissions are fixed inline, condition labels are set automatically, "did you hear it?" can be answered from the notification, and a final step saves the results to Drive. The table below is the reference for what each step measures.
+>
+> | App step | Test below | Condition label |
+> |---|---|---|
+> | Sound check | A | `normal` |
+> | Alert while the phone is locked / Same test, alarm volume | C (media / alarm) | `normal` |
+> | Alert without the alarm permission | C2 | `exact-denied` |
+> | Restart the phone | E | `reboot` |
+> | Power saving mode | F | `battery-saver` |
+> | Samsung: sleeping apps / unrestricted battery (Samsung only) | G | `samsung-sleeping` / `samsung-unrestricted` |
+> | Overnight test (night 1) | D | `overnight` |
+> | Baby monitor night (night 2) | H | `monitor` |
+> | Real baby sounds (optional) | Clips | — |
+>
+> The **target 36 app** ("Baby Sim extra test") runs only the sound check and the two alerts, about 10 minutes.
+
 **Install.** Install both APKs: `M3 spike · target 36` and `M3 spike · target 37`. They install side by side. Open each one:
 1. Tap **Allow notifications**.
 2. Tap **Exact alarm permission** and turn it on. It starts *denied* on Android 14+ (`03` §2).
