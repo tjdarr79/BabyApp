@@ -15,7 +15,8 @@ description: Build, lint and screenshot-test the BabyApp Android code (the M3 sp
 ## Commands (quiet flags, from `spike/`)
 | Purpose | Command |
 |---|---|
-| Both APKs | `./gradlew assembleT36Debug assembleT37Debug -q` |
+| Both APKs (debug, for your own checks) | `./gradlew assembleT36Debug assembleT37Debug -q` |
+| **Tester APKs** (R8-shrunk, about 2 MB, debug-signed) | `./gradlew assembleT36Release assembleT37Release -q`. Debug builds are about 14 MB, and Drive uploads from a cloud session are capped at **10 MB**. |
 | Lint (must be 0 errors) | `./gradlew lintT36Debug lintT37Debug -q`, then `grep -c 'Error:' app/build/reports/lint-results-t37Debug.txt` |
 | Screenshot tests (render screens on the JVM) | `./gradlew testT37DebugUnitTest -q`. PNGs land in `app/build/outputs/roborazzi/` |
 | APK facts (target, permissions, label) | `/opt/android-sdk/build-tools/36.1.0/aapt2 dump badging <apk>` |
@@ -44,3 +45,4 @@ Flavors: `t36` (targetSdk 36, app "Baby Sim extra test", short plan) and `t37` (
 - Production permission set only: never `USE_EXACT_ALARM`, `USE_FULL_SCREEN_INTENT`, `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` or a `specialUse` FGS (`CLAUDE.md`).
 - Before you hand over an APK: 0 lint errors on both flavors, screenshot tests pass, and you have **looked** at the PNGs (Read tool). Fix truncated text and cramped buttons before shipping.
 - Bump `versionCode`/`versionName` when testers get a new build. Logs record `app_version`.
+- After R8, check that the sounds survived. Resource names are shortened (`res/2Y.wav`), so check with `aapt2 dump resources <apk> | grep -A1 raw/`, not by filename.

@@ -41,6 +41,16 @@ android {
         compose = true
     }
 
+    // Testers install the shrunk release build (about 3 MB instead of 14 MB), debug-signed for sideloading.
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.all { it.systemProperty("roborazzi.test.record", "true") }

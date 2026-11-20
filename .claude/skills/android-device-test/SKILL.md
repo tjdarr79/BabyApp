@@ -11,8 +11,8 @@ description: Get a BabyApp test build onto a real phone, run the M3 platform tes
 - **This cloud session cannot reach either.** It has no PC folder shared, and Desktop Commander runs on this same Linux VM, not on the PC. Don't claim to run adb or PowerShell on their machine. Give exact commands for them to run instead.
 
 ## Getting the APK to the phone
-1. Build (see the `android-build` skill), then copy to the scratchpad as `m3-spike-target37.apk` / `…36.apk`.
-2. Upload to the owner's Drive folder **Baby Sim M3 spike** (find its id with `mcp__Google_Drive__search_files` by name; the repo is public, so ids stay out of it) with `mcp__Google_Drive__create_file`. Use `disableConversionToGoogleType: true` and `base64Content` as a `sha256:<hex>:<path>` reference. Replace the old files rather than piling up versions.
+1. Build the **release** APKs (see the `android-build` skill). Copy them to the scratchpad as `Baby-Sim-test-MAIN-v<N>.apk` (t37) and `Baby-Sim-extra-test-v<N>.apk` (t36).
+2. Upload to the owner's Drive folder **Baby Sim M3 spike** (find its id with `mcp__Google_Drive__search_files` by name; the repo is public, so ids stay out of it) with `mcp__Google_Drive__create_file`. Use `disableConversionToGoogleType: true` and `base64Content` as a `sha256:<hex>:<path>` reference. Drive can't replace contents in place: upload the new files, then move the old ones to the trash with `mcp__Google_Drive__trash_file`.
 3. On the phone: Drive app → tap the APK → allow "install unknown apps" for Drive → if Play Protect warns, **More details → Install anyway**.
 4. A drag-and-drop install error "could not parse error string" usually means a `.zip` was dragged, not the `.apk`. Real errors show with `adb install -r <apk>`.
 
