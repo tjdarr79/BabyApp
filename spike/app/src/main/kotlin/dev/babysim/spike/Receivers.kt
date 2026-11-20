@@ -138,6 +138,49 @@ object Notifications {
         nm.createNotificationChannel(playback)
     }
 
+    const val EXTRA_FROM = "from"
+
+    /**
+     * Tapping a test notification's text opens the app, whether it is running or not (NEW_TASK), reusing the
+     * open screen if there is one. Tester report m3-4: the crying notification had no tap action at all.
+     */
+    fun openApp(
+        context: Context,
+        from: String,
+    ): PendingIntent =
+        PendingIntent.getActivity(
+            context,
+            from.hashCode(),
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra(EXTRA_FROM, from),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
+
+    /** The ongoing "baby is crying" / "monitor running" notification of the playback service (T2/T3). */
+    fun playback(
+        context: Context,
+        text: String,
+        stop: PendingIntent,
+        question: String?,
+    ): Notification.Builder {
+        val builder =
+            Notification
+                .Builder(context, PLAYBACK_CHANNEL)
+                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setContentTitle(text)
+                .setContentIntent(openApp(context, "playback"))
+                .setOngoing(true)
+                .addAction(Notification.Action.Builder(null, "Stop", stop).build())
+        question?.let {
+            builder.setContentText("Can you hear it? Tap the button if you can.")
+            builder.addAction(
+                Notification.Action.Builder(null, "I can hear it", Answers.intent(context, it, Answers.CLEAR, stopCry = true)).build(),
+            )
+        }
+        return builder
+    }
+
     /** The T1 alert. With a [question], it carries "Yes, clearly / Faint / No" buttons. */
     fun careAlert(
         context: Context,
@@ -149,20 +192,13 @@ object Notifications {
         val nm = context.getSystemService(NotificationManager::class.java)
         val channel = nm.getNotificationChannel(CARE_CHANNEL)
         val id = (System.currentTimeMillis() % 1_000_000).toInt() + 2000
-        val open =
-            PendingIntent.getActivity(
-                context,
-                0,
-                Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                PendingIntent.FLAG_IMMUTABLE,
-            )
         val builder =
             Notification
                 .Builder(context, CARE_CHANNEL)
                 .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setContentIntent(open)
+                .setContentIntent(openApp(context, "alert"))
                 .setCategory(Notification.CATEGORY_REMINDER)
                 .setAutoCancel(true)
         question?.let { q ->

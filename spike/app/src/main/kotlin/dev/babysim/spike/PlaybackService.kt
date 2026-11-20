@@ -72,19 +72,7 @@ class PlaybackService : Service() {
                 Intent(this, PlaybackService::class.java).setAction(ACTION_STOP),
                 PendingIntent.FLAG_IMMUTABLE,
             )
-        val builder =
-            Notification
-                .Builder(this, Notifications.PLAYBACK_CHANNEL)
-                .setSmallIcon(android.R.drawable.ic_media_play)
-                .setContentTitle(text)
-                .setOngoing(true)
-                .addAction(Notification.Action.Builder(null, "Stop", stop).build())
-        question?.let {
-            builder.setContentText("Can you hear it? Tap the button if you can.")
-            builder.addAction(
-                Notification.Action.Builder(null, "I can hear it", Answers.intent(this, it, Answers.CLEAR, stopCry = true)).build(),
-            )
-        }
+        val builder = Notifications.playback(this, text, stop, question)
         session?.let { builder.setStyle(Notification.MediaStyle().setMediaSession(it.sessionToken)) }
         return try {
             Notifications.ensureChannels(this)

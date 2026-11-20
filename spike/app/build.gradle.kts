@@ -15,8 +15,8 @@ android {
     defaultConfig {
         applicationId = "dev.babysim.spike"
         minSdk = 26
-        versionCode = 4
-        versionName = "m3-4"
+        versionCode = 5
+        versionName = "m3-5"
     }
 
     // Two installs side by side: the same app targeting API 36 and API 37 (docs/03 §12).

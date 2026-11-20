@@ -16,8 +16,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         Notifications.ensureChannels(this)
-        SpikeLog.log(this, "app_opened")
+        SpikeLog.log(this, "app_opened", detail = "from=${intent?.getStringExtra(Notifications.EXTRA_FROM) ?: "launcher"}")
         setContent { SpikeTheme { TestApp(resumes.intValue) } }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        intent.getStringExtra(Notifications.EXTRA_FROM)?.let { SpikeLog.log(this, "app_opened", detail = "from=$it") }
     }
 
     override fun onResume() {
