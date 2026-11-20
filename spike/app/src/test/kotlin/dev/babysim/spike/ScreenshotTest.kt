@@ -88,6 +88,19 @@ class ScreenshotTest {
         shoot("07-send-results")
     }
 
+    /** The ☰ sheet, scrolled to the top: "Save results" must be the first thing seen. */
+    @Test
+    fun allTestsSheet() {
+        done(Steps.WELCOME, Steps.SETUP, Steps.SOUND)
+        captureRoboImage("build/outputs/roborazzi/10-all-tests-sheet.png") {
+            SpikeTheme {
+                androidx.compose.material3.Surface {
+                    dev.babysim.spike.ui.AllTests(plan = Steps.ALL, onPick = {})
+                }
+            }
+        }
+    }
+
     @Test
     @Config(qualifiers = "+night")
     fun darkMode() {

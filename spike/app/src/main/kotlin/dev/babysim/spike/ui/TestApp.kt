@@ -159,23 +159,50 @@ fun TestApp(
 
     if (showList) {
         ModalBottomSheet(onDismissRequest = { showList = false }) {
-            Text("All tests", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 24.dp))
-            Spacer(Modifier.size(8.dp))
-            plan.forEach { s ->
-                val st = Steps.state(context, s.id)
-                ListItem(
-                    headlineContent = { Text(s.title) },
-                    supportingContent = { Text(statusText(st) + " · " + s.time) },
-                    leadingContent = { StepBadge(s.icon, done = Steps.finished(st), small = true) },
-                    modifier =
-                        Modifier.clickable {
-                            selected = s.id
-                            showList = false
-                        },
-                )
-            }
-            Spacer(Modifier.size(24.dp))
+            AllTests(
+                plan = plan,
+                onPick = { id ->
+                    selected = id
+                    showList = false
+                },
+            )
         }
+    }
+}
+
+/**
+ * The ☰ sheet: "Save results now" first (testers can save at any point), then every test. Scrolls, because
+ * with the Samsung-only steps the list is taller than a phone screen.
+ */
+@Composable
+fun AllTests(
+    plan: List<Step>,
+    onPick: (String) -> Unit,
+) {
+    val context = LocalContext.current
+    Column(Modifier.verticalScroll(rememberScrollState())) {
+        Column(Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("Save your results", style = MaterialTheme.typography.titleLarge)
+            Text(
+                "Saves everything recorded so far. You can save as often as you like and keep testing.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            SaveResults(onSaved = {})
+            HorizontalDivider()
+            Text("All tests", style = MaterialTheme.typography.titleLarge)
+        }
+        Spacer(Modifier.size(8.dp))
+        plan.forEach { s ->
+            val st = Steps.state(context, s.id)
+            ListItem(
+                headlineContent = { Text(s.title) },
+                supportingContent = { Text(statusText(st) + " · " + s.time) },
+                leadingContent = { StepBadge(s.icon, done = Steps.finished(st), small = true) },
+                modifier = Modifier.clickable { onPick(s.id) },
+            )
+        }
+        Spacer(Modifier.size(32.dp))
     }
 }
 
