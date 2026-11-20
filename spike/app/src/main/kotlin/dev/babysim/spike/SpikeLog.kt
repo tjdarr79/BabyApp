@@ -118,11 +118,15 @@ data class DeviceState(
                 UsageStatsManager.STANDBY_BUCKET_FREQUENT -> "frequent"
                 UsageStatsManager.STANDBY_BUCKET_RARE -> "rare"
                 UsageStatsManager.STANDBY_BUCKET_RESTRICTED -> "restricted"
+                EXEMPTED_BUCKET -> "exempted"
                 else -> "bucket_$b"
             }
         }
     }
 }
+
+/** Hidden platform constant (UsageStatsManager.STANDBY_BUCKET_EXEMPTED); seen on Samsung with Unrestricted battery. */
+private const val EXEMPTED_BUCKET = 5
 
 object BuildInfo {
     fun versionName(context: Context): String =

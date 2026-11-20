@@ -24,6 +24,12 @@ def device(r):
     return f"{r['manufacturer']} {r['model']} (SDK {r['sdk']})"
 
 
+def condition(r):
+    """The step's label plus what the phone actually reported (power saving can be on for any step)."""
+    extra = " + power saving" if r.get("power_save") == "true" and r["condition"] != "battery-saver" else ""
+    return r["condition"] + extra
+
+
 def detail(r):
     return dict(kv.split("=", 1) for kv in r["detail"].split(";") if "=" in kv)
 
@@ -54,7 +60,7 @@ def lateness(all_rows):
     groups = defaultdict(lambda: {"late": [], "planned": 0, "idle": 0})
     for key, s in scheduled.items():
         method = detail(s).get("method", s["series"])
-        g = groups[(device(s), s["target_sdk"], s["condition"], method)]
+        g = groups[(device(s), s["target_sdk"], condition(s), method)]
         g["planned"] += 1
         f = fired.get(key)
         if f:
@@ -118,7 +124,10 @@ def tiers(all_rows):
             stats[(key, d.get("usage", "?"))]["started"] += 1
             stats[(key, d.get("usage", "?"))][f"focus_{d.get('focus', '?')}"] += 1
         elif e in ("t2_start_failed", "fgs_failed") and detail(r).get("usage") != "monitor":
-            stats[(key, detail(r).get("usage", "?"))]["refused"] += 1
+            # T2 is defined with the exact permission granted (docs/03 §7). A refusal without it is the expected
+            # exact-denied fallback (T1 only); it is reported, not counted against T2.
+            bucket = "refused" if r["exact_granted"] == "true" else "refused_exact_off"
+            stats[(key, detail(r).get("usage", "?"))][bucket] += 1
         elif e == "t2_check":
             stats[(key, usage_of.get(r["run_id"], "?"))]["playing_" + detail(r).get("playing", "?")] += 1
     t1_body = [
@@ -133,13 +142,13 @@ def tiers(all_rows):
         a = t2.get(((dev, tgt), usage), {})
         refused = s["refused"]
         t2_body.append([
-            dev, tgt, usage, s["started"], refused, s["focus_granted"], s["focus_failed"], s["playing_true"],
-            s["playing_false"], answers_text(a), verdict(s["started"], refused, a),
+            dev, tgt, usage, s["started"], refused, s["refused_exact_off"], s["focus_granted"], s["focus_failed"],
+            s["playing_true"], s["playing_false"], answers_text(a), verdict(s["started"], refused, a),
         ])
     return (
         table(["Device", "Target", "Posted", "Failed", "Heard?", "T1 verdict"], t1_body),
-        table(["Device", "Target", "Usage", "Started", "Refused", "Focus granted", "Focus failed", "Playing after 1.5 s",
-               "Not playing", "Heard?", "T2 verdict"], t2_body),
+        table(["Device", "Target", "Usage", "Started", "Refused", "Refused, exact off (expected)", "Focus granted",
+               "Focus failed", "Playing after 1.5 s", "Not playing", "Heard?", "T2 verdict"], t2_body),
     )
 
 
