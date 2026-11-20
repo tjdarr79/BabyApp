@@ -6,7 +6,7 @@ description: Get a BabyApp test build onto a real phone, run the M3 platform tes
 # Testing on devices
 
 ## Who has what (2026-11)
-- **Owner:** Windows PC with Android Studio "Rabbit 2". The PC lacks the RAM to run the emulator, so don't plan on emulator runs.
+- **Owner:** Windows PC with Android Studio "Rabbit 2". RAM is tight, so emulator runs are short smoke tests only (AVD RAM 2048 MB). Testers can also attach the CSV straight into the Claude chat.
 - **Reviewer:** Samsung Galaxy A54 5G. This is the real device for M3 (Samsung / One UI row).
 - **This cloud session cannot reach either.** It has no PC folder shared, and Desktop Commander runs on this same Linux VM, not on the PC. Don't claim to run adb or PowerShell on their machine. Give exact commands for them to run instead.
 
@@ -47,7 +47,7 @@ The app guides them step by step (`spike/.../Steps.kt`). They need no labels or 
 | Rare standby bucket | `adb shell am set-standby-bucket dev.babysim.spike.t37 rare` |
 | Exact alarms off | `adb shell appops set dev.babysim.spike.t37 SCHEDULE_EXACT_ALARM deny` (undo: `allow`) |
 | Android 17 audio rules on Android 16 | `adb shell cmd audio set-enable-hardening enable` |
-| Pull the log without the UI | `adb exec-out run-as dev.babysim.spike.t37 cat files/spike-log.csv > t37.csv` |
+| Pull the log | Tester (release) builds are **not debuggable**, so `run-as` fails. Use the app's **Save results** → Downloads, then `adb pull /sdcard/Download <pc folder>`. (`adb exec-out run-as dev.babysim.spike.t37 cat files/spike-log.csv > t37.csv` works only on debug builds.) |
 | Why an app closed | `adb logcat -d -s AndroidRuntime` |
 
 On Windows, adb lives at `%LOCALAPPDATA%\Android\Sdk\platform-tools\adb`.
